@@ -1213,13 +1213,10 @@
         };
 
         const coupons = {
-            "DIWALI10": { type: "percent", value: 10, label: "10% Diwali Discount applied!" },
+            "10DIWALI": { type: "percent", value: 10, label: "10% Diwali Discount applied!" },
             "DIWALI20": { type: "percent", value: 20, label: "20% Super Festive Discount!" },
-            "NIT30": { type: "percent", value: 30, label: "30% Special Discount applied!" },
+            "NIT20": { type: "percent", value: 20, label: "20% Special Discount applied!" },
             "GHOSTRIDER": { type: "percent", value: 30, label: "30% Mega Bumper Discount!" },
-            "BPUT30": { type: "percent", value: 30, label: "30% Mega Bumper Discount!" },
-            "SRV30": { type: "percent", value: 30, label: "30% Mega Bumper Discount!" },
-            "RKL30": { type: "percent", value: 30, label: "30% Mega Bumper Discount!" },
             "GOLI22": { type: "percent", value: 22, label: "22% Dhamaka Discount applied!" }
         };
 
@@ -1730,7 +1727,7 @@
             msg += `--------------------------------\n`;
             msg += `Kripya mera order pack karein aur confirm karein! 🙏✨\n\n`;
 
-            // Admin One-Tap Confirmation & Save to Sheet Link
+            // Auto-Save Order directly to Google Sheet in background (No link in WhatsApp)
             if (GOOGLE_SHEET_WEBAPP_URL && GOOGLE_SHEET_WEBAPP_URL.trim() !== "") {
                 const orderData = {
                     name: name,
@@ -1742,12 +1739,18 @@
                     discount: discountAmount,
                     total: finalPayable
                 };
-                // Safe UTF-8 Base64 serialization to prevent WhatsApp URL parameter collision
+                // Safe UTF-8 Base64 serialization
                 const b64Data = btoa(encodeURIComponent(JSON.stringify(orderData)).replace(/%([0-9A-F]{2})/g, function (match, p1) {
                     return String.fromCharCode('0x' + p1);
                 }));
-                const confirmUrl = `${GOOGLE_SHEET_WEBAPP_URL}?action=confirm&d=${encodeURIComponent(b64Data)}`;
-                msg += `🔒 *Admin Confirmation Link (Tap to Save in Sheet):*\n${confirmUrl}`;
+                const saveUrl = `${GOOGLE_SHEET_WEBAPP_URL}?action=confirm&d=${encodeURIComponent(b64Data)}`;
+                
+                try {
+                    fetch(saveUrl, { mode: 'no-cors', keepalive: true }).catch(() => {});
+                } catch (e) {}
+                // Fallback beacon to guarantee delivery on mobile
+                const beacon = new Image();
+                beacon.src = saveUrl;
             }
 
             const btn = document.getElementById('btnSubmitOrder');
