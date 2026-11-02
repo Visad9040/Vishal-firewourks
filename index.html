@@ -1,262 +1,1446 @@
 <!DOCTYPE html>
 <html lang="hi">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vishal Fireworks - Order Store</title>
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Vishal Fireworks - Premium Festive Store</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap"
+        rel="stylesheet">
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif; }
-        body { background: #f4f5f7; color: #222; font-size: 13px; padding-bottom: 90px; }
-        header { background: #b71c1c; color: #fff; padding: 10px; text-align: center; }
-        header h1 { font-size: 18px; font-weight: 700; letter-spacing: 0.5px; }
-        header p { font-size: 11px; color: #ffcdd2; margin-top: 2px; }
-        
-        .sticky-top-block { position: sticky; top: 0; background: #f4f5f7; z-index: 100; padding: 4px 0; }
-        .top-container { max-width: 900px; margin: 6px auto; padding: 0 8px; }
-        .search-row { display: flex; gap: 6px; }
-        .search-input { flex: 1; padding: 7px 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 12px; outline: none; background: #fff; }
-        .btn-reset { padding: 6px 10px; border: 1px solid #ccc; background: #fff; border-radius: 4px; font-size: 12px; cursor: pointer; }
-        
-        .cat-scroll { display: flex; overflow-x: auto; gap: 6px; padding: 6px 0 2px 0; scrollbar-width: none; }
-        .cat-scroll::-webkit-scrollbar { display: none; }
-        .cat-chip { white-space: nowrap; padding: 4px 10px; background: #fff; border: 1px solid #ddd; border-radius: 14px; font-size: 11px; font-weight: 600; color: #555; cursor: pointer; }
-        .cat-chip.active { background: #b71c1c; color: #fff; border-color: #b71c1c; }
+        :root {
+            --bg-page: #f8fafc;
+            --bg-surface: #ffffff;
+            --bg-subtle: #f1f5f9;
+            --border-light: #e2e8f0;
+            --border-subtle: #edf2f7;
 
-        .container { max-width: 900px; margin: 0 auto; padding: 0 8px; }
-        .table-wrap { background: #fff; border: 1px solid #e0e0e0; border-radius: 4px; overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; font-size: 12px; }
-        th { background: #e6e6e6; color: #111; text-align: left; padding: 7px 8px; font-weight: 700; font-size: 11px; border-bottom: 2px solid #bbb; }
-        td { padding: 5px 8px; border-bottom: 1px solid #eee; vertical-align: middle; }
+            --text-main: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #94a3b8;
 
-        .item-cell { display: flex; align-items: center; gap: 7px; }
-        .camera-icon-btn {
+            --brand-crimson: #b71c1c;
+            --brand-crimson-light: #c62828;
+            --brand-crimson-subtle: #fef2f2;
+            --brand-gold: #b45309;
+            --brand-gold-light: #fef3c7;
+            --brand-gold-border: #fde68a;
+
+            --accent-green: #15803d;
+            --accent-green-bg: #dcfce7;
+            --whatsapp-green: #25D366;
+            --whatsapp-dark: #128C7E;
+
+            --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.04);
+            --shadow-card: 0 3px 14px -2px rgba(15, 23, 42, 0.06), 0 1px 3px rgba(15, 23, 42, 0.03);
+            --shadow-hover: 0 8px 24px -4px rgba(15, 23, 42, 0.09), 0 2px 6px rgba(15, 23, 42, 0.04);
+            --shadow-floating: 0 16px 36px rgba(15, 23, 42, 0.18), 0 4px 12px rgba(15, 23, 42, 0.08);
+
+            --safe-bottom: env(safe-area-inset-bottom, 0px);
+            --safe-top: env(safe-area-inset-top, 0px);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            font-size: 14px;
+            line-height: 1.5;
+            min-height: 100vh;
+            padding-bottom: calc(105px + var(--safe-bottom));
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Ambient Confetti Canvas */
+        #confettiCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* Toast Message */
+        .toast {
+            position: fixed;
+            top: calc(16px + var(--safe-top));
+            left: 50%;
+            transform: translateX(-50%) translateY(-30px);
+            background: #0f172a;
+            color: #ffffff;
+            padding: 9px 20px;
+            border-radius: 999px;
+            font-size: 12.5px;
+            font-weight: 700;
+            box-shadow: 0 10px 25px rgba(15, 23, 42, 0.25);
+            z-index: 10000;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        /* Premium White Header */
+        header {
+            background: #ffffff;
+            border-bottom: 1px solid var(--border-light);
+            padding: calc(16px + var(--safe-top)) 16px 14px 16px;
+            text-align: center;
+            position: relative;
+        }
+
+        .royal-badge {
             display: inline-flex;
             align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            background: var(--brand-gold-light);
+            border: 1px solid var(--brand-gold-border);
+            border-radius: 999px;
+            font-size: 10.5px;
+            font-weight: 800;
+            color: var(--brand-gold);
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        header h1 {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 26px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            color: var(--brand-crimson);
+            display: flex;
+            align-items: center;
             justify-content: center;
+            gap: 8px;
+        }
+
+        .header-tagline {
+            font-size: 12.5px;
+            color: var(--text-secondary);
+            margin-top: 3px;
+            font-weight: 500;
+        }
+
+        .trust-pills {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .trust-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: var(--bg-subtle);
+            border: 1px solid var(--border-light);
+            padding: 3px 10px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        /* Sticky Control Bar */
+        .sticky-top-block {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background: rgba(255, 255, 255, 0.94);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border-bottom: 1px solid var(--border-light);
+            padding: 10px 14px 10px 14px;
+            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.02);
+        }
+
+        .search-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .search-box-wrap {
+            position: relative;
+            flex: 1;
+        }
+
+        .search-box-wrap svg {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            pointer-events: none;
+            transition: color 0.2s;
+        }
+
+        .search-input {
+            width: 100%;
+            height: 44px;
+            padding: 0 40px 0 42px;
+            background: var(--bg-subtle);
+            border: 1.5px solid transparent;
+            border-radius: 12px;
+            font-size: 13.5px;
+            font-weight: 500;
+            color: var(--text-main);
+            outline: none;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .search-input::placeholder {
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        .search-input:focus {
+            background: #ffffff;
+            border-color: var(--brand-crimson);
+            box-shadow: 0 0 0 3px rgba(183, 28, 28, 0.08);
+        }
+
+        .search-input:focus+svg {
+            color: var(--brand-crimson);
+        }
+
+        .search-clear-btn {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
             width: 22px;
             height: 22px;
+            border-radius: 50%;
+            background: #cbd5e1;
+            border: none;
+            color: #ffffff;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .search-clear-btn:active {
+            background: #94a3b8;
+        }
+
+        /* Category Chips Scroll */
+        .cat-scroll {
+            display: flex;
+            overflow-x: auto;
+            gap: 8px;
+            padding: 10px 0 2px 0;
+            scrollbar-width: none;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .cat-scroll::-webkit-scrollbar {
+            display: none;
+        }
+
+        .cat-chip {
+            white-space: nowrap;
+            padding: 7px 14px;
             background: #ffffff;
-            border: 1px solid #e0e0e0;
-            border-radius: 4px;
+            border: 1px solid var(--border-light);
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            align-items: center;
+            gap: 6px;
             flex-shrink: 0;
+            user-select: none;
+        }
+
+        .cat-chip:active {
+            transform: scale(0.95);
+        }
+
+        .cat-chip.active {
+            background: var(--brand-crimson);
+            color: #ffffff;
+            border-color: var(--brand-crimson);
+            box-shadow: 0 3px 10px rgba(183, 28, 28, 0.25);
+            font-weight: 700;
+        }
+
+        /* Main Container & Product Grid */
+        .main-container {
+            max-width: 900px;
+            margin: 12px auto 0 auto;
+            padding: 0 12px;
+        }
+
+        .results-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 4px 6px 10px 6px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .product-feed {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+
+        @media (min-width: 640px) {
+            .product-feed {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+        }
+
+        /* Premium White Product Card */
+        .product-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-light);
+            border-radius: 16px;
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            box-shadow: var(--shadow-card);
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+        }
+
+        .product-card:active {
+            transform: scale(0.985);
+        }
+
+        .product-card.has-items {
+            border-color: #fca5a5;
+            background: #fffdfd;
+            box-shadow: 0 4px 18px rgba(183, 28, 28, 0.08);
+            border-left: 3.5px solid var(--brand-crimson);
+        }
+
+        .card-left {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .card-tags {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 5px;
+        }
+
+        .tag-cat {
+            font-size: 10.5px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        /* Pastel Category Badges */
+        .tag-cat-sparklers {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .tag-cat-chakkar {
+            background: #e0f2fe;
+            color: #075985;
+        }
+
+        .tag-cat-anar {
+            background: #fce7f3;
+            color: #9d174d;
+        }
+
+        .tag-cat-rockets {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .tag-cat-skyshots {
+            background: #ede9fe;
+            color: #5b21b6;
+        }
+
+        .tag-cat-bombs {
+            background: #ffedd5;
+            color: #9a3412;
+        }
+
+        .tag-cat-ladi {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .tag-cat-kids {
+            background: #ecfdf5;
+            color: #065f46;
+        }
+
+        .tag-cat-default {
+            background: #f1f5f9;
+            color: #475569;
+        }
+
+        .tag-id {
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .card-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-main);
+            line-height: 1.35;
+            margin-bottom: 6px;
+            word-break: break-word;
+        }
+
+        .card-actions-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .photo-link-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 9px;
+            background: var(--bg-subtle);
+            border: 1px solid var(--border-light);
+            border-radius: 6px;
+            font-size: 11px;
+            color: #2563eb;
             text-decoration: none;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+            font-weight: 600;
             transition: all 0.15s;
         }
-        .camera-icon-btn:hover {
-            border-color: #d32f2f;
-            background: #fff5f5;
-            transform: scale(1.15);
-            box-shadow: 0 2px 5px rgba(211,47,47,0.25);
+
+        .photo-link-btn:hover {
+            background: #eff6ff;
+            border-color: #bfdbfe;
         }
-        .p-title {
-            font-weight: 600;
-            color: #111;
+
+        .card-right {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .price-badge {
+            text-align: right;
+        }
+
+        .price-val {
+            font-size: 16.5px;
+            font-weight: 800;
+            color: var(--text-main);
+            letter-spacing: -0.3px;
+        }
+
+        .price-sub-calc {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--brand-crimson);
+            min-height: 15px;
+        }
+
+        /* Clean White & Crimson Stepper */
+        .btn-add-initial {
+            padding: 7px 18px;
+            background: #ffffff;
+            border: 1.5px solid var(--brand-crimson);
+            border-radius: 999px;
+            color: var(--brand-crimson);
+            font-size: 12.5px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            box-shadow: 0 1px 3px rgba(183, 28, 28, 0.08);
+        }
+
+        .btn-add-initial:active {
+            transform: scale(0.92);
+            background: var(--brand-crimson);
+            color: #ffffff;
+        }
+
+        .stepper-box {
+            display: flex;
+            align-items: center;
+            background: var(--brand-crimson);
+            border: 1px solid var(--brand-crimson);
+            border-radius: 999px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(183, 28, 28, 0.25);
+        }
+
+        .step-btn {
+            width: 32px;
+            height: 32px;
+            background: transparent;
+            border: none;
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.15s, transform 0.1s;
+        }
+
+        .step-btn:active {
+            background: rgba(0, 0, 0, 0.15);
+            transform: scale(0.9);
+        }
+
+        .step-val {
+            width: 28px;
+            text-align: center;
+            font-size: 13.5px;
+            font-weight: 800;
+            color: #ffffff;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            background: #ffffff;
+            border: 1px dashed var(--border-light);
+            border-radius: 16px;
+            margin-top: 10px;
+        }
+
+        .empty-state-icon {
+            font-size: 38px;
+            margin-bottom: 8px;
+        }
+
+        .empty-state h3 {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 4px;
+        }
+
+        .empty-state p {
             font-size: 12px;
-            line-height: 1.2;
+            color: var(--text-secondary);
+            margin-bottom: 14px;
         }
 
-        tr:hover { background-color: #fafafa; }
-        .t-id { width: 34px; color: #777; font-size: 10px; text-align: center; }
-        .t-name { font-weight: 600; color: #111; }
-        
-        .t-price { width: 75px; text-align: right; font-weight: 600; color: #c62828; white-space: nowrap; }
-        .t-qty { width: 100px; text-align: center; }
-        .qty-box { display: inline-flex; align-items: center; border: 1px solid #ccc; border-radius: 3px; overflow: hidden; background: #fff; }
-        .q-btn { width: 25px; height: 23px; background: #f0f0f0; border: none; cursor: pointer; font-weight: bold; font-size: 13px; color: #333; display: flex; align-items: center; justify-content: center; }
-        .q-btn:active { background: #ddd; }
-        .q-val { width: 28px; height: 23px; border: none; border-left: 1px solid #eee; border-right: 1px solid #eee; text-align: center; font-size: 12px; font-weight: 600; outline: none; }
-        .t-total { width: 75px; text-align: right; font-weight: 600; color: #2e7d32; white-space: nowrap; }
+        .btn-clear-filters {
+            padding: 8px 18px;
+            background: var(--brand-crimson);
+            border: none;
+            border-radius: 999px;
+            color: #ffffff;
+            font-size: 12.5px;
+            font-weight: 700;
+            cursor: pointer;
+        }
 
-        .bottom-bar { position: fixed; bottom: 0; left: 0; right: 0; background: #fff; border-top: 2px solid #b71c1c; padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); z-index: 200; }
-        .bar-total { font-size: 11px; color: #666; }
-        .bar-total strong { font-size: 16px; color: #b71c1c; display: block; }
-        .btn-order { background: #2e7d32; color: #fff; border: none; padding: 9px 18px; border-radius: 4px; font-size: 13px; font-weight: 700; cursor: pointer; }
+        /* Luxury Floating Cart Pill */
+        .floating-cart-bar {
+            position: fixed;
+            bottom: calc(14px + var(--safe-bottom));
+            left: 12px;
+            right: 12px;
+            max-width: 876px;
+            margin: 0 auto;
+            background: #0f172a;
+            color: #ffffff;
+            border-radius: 20px;
+            padding: 10px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--shadow-floating);
+            z-index: 100;
+            transform: translateY(130%);
+            opacity: 0;
+            pointer-events: none;
+            transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.25s ease;
+        }
 
-        .modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.65); display: none; justify-content: center; align-items: center; padding: 10px; z-index: 300; }
-        .modal-content { background: #fff; max-width: 420px; width: 100%; border-radius: 6px; max-height: 92vh; overflow-y: auto; padding: 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.25); }
-        .modal-title { font-size: 14px; font-weight: 700; color: #b71c1c; border-bottom: 1px solid #eee; padding-bottom: 5px; margin-bottom: 8px; display: flex; justify-content: space-between; }
-        .close { cursor: pointer; font-size: 18px; color: #888; }
-        .order-summary-box { max-height: 110px; overflow-y: auto; background: #fafafa; border: 1px solid #eee; padding: 5px 8px; border-radius: 4px; margin-bottom: 8px; font-size: 11px; }
-        .summary-line { display: flex; justify-content: space-between; padding: 2px 0; border-bottom: 1px dashed #eee; }
-        
-        .form-group { margin-bottom: 6px; }
-        .form-group label { display: block; font-size: 11px; font-weight: 600; color: #333; margin-bottom: 2px; }
-        .form-group input, .form-group textarea { width: 100%; padding: 6px 8px; font-size: 12px; border: 1px solid #ccc; border-radius: 4px; outline: none; }
-        
-        .coupon-container { background: #fff8e1; border: 1px dashed #ffa000; border-radius: 4px; padding: 8px; margin: 8px 0; }
-        .coupon-title { font-size: 11px; font-weight: 700; color: #b71c1c; margin-bottom: 4px; }
-        
-        .btn-whatsapp { width: 100%; background: #25D366; color: #fff; border: none; padding: 10px; font-size: 13px; font-weight: 700; border-radius: 4px; margin-top: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .floating-cart-bar.visible {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .cart-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .cart-count-pill {
+            font-size: 11px;
+            font-weight: 700;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .cart-total-display {
+            font-size: 19px;
+            font-weight: 800;
+            color: #ffffff;
+            letter-spacing: -0.3px;
+        }
+
+        .btn-view-order {
+            background: linear-gradient(135deg, #c62828 0%, #e53935 100%);
+            color: #ffffff;
+            border: none;
+            padding: 11px 22px;
+            border-radius: 12px;
+            font-size: 13.5px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(229, 57, 53, 0.4);
+            transition: transform 0.15s, box-shadow 0.15s;
+        }
+
+        .btn-view-order:active {
+            transform: scale(0.95);
+        }
+
+        /* Bottom Sheet Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(15, 23, 42, 0.55);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            display: none;
+            justify-content: center;
+            align-items: flex-end;
+            z-index: 200;
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .bottom-sheet {
+            background: #ffffff;
+            width: 100%;
+            max-width: 500px;
+            border-radius: 24px 24px 0 0;
+            padding: 16px 20px calc(24px + var(--safe-bottom)) 20px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            transform: translateY(100%);
+            transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .modal-overlay.active .bottom-sheet {
+            transform: translateY(0);
+        }
+
+        .sheet-handle {
+            width: 44px;
+            height: 4px;
+            background: #cbd5e1;
+            border-radius: 999px;
+            margin: 0 auto 14px auto;
+        }
+
+        .sheet-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-light);
+            margin-bottom: 14px;
+        }
+
+        .sheet-title {
+            font-size: 16.5px;
+            font-weight: 800;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .btn-close-sheet {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--bg-subtle);
+            border: none;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background 0.15s;
+        }
+
+        .btn-close-sheet:active {
+            background: #e2e8f0;
+        }
+
+        /* Order Summary Box */
+        .order-summary-box {
+            background: var(--bg-subtle);
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 10px 14px;
+            max-height: 140px;
+            overflow-y: auto;
+            margin-bottom: 14px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 0;
+            font-size: 12.5px;
+            border-bottom: 1px dashed var(--border-light);
+        }
+
+        .summary-row:last-child {
+            border-bottom: none;
+        }
+
+        .summary-item-name {
+            color: var(--text-secondary);
+            font-weight: 600;
+            max-width: 70%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .summary-item-price {
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        /* Form Controls */
+        .form-group {
+            margin-bottom: 10px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 11.5px;
+            font-weight: 700;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .input-with-icon {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            pointer-events: none;
+        }
+
+        .app-input {
+            width: 100%;
+            height: 44px;
+            padding: 0 12px 0 40px;
+            background: var(--bg-page);
+            border: 1.5px solid var(--border-light);
+            border-radius: 10px;
+            font-size: 13.5px;
+            color: var(--text-main);
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .app-textarea {
+            width: 100%;
+            padding: 10px 12px 10px 40px;
+            background: var(--bg-page);
+            border: 1.5px solid var(--border-light);
+            border-radius: 10px;
+            font-size: 13.5px;
+            color: var(--text-main);
+            outline: none;
+            resize: none;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+
+        .app-input:focus,
+        .app-textarea:focus {
+            border-color: var(--brand-crimson);
+            background: #ffffff;
+            box-shadow: 0 0 0 3px rgba(183, 28, 28, 0.08);
+        }
+
+        /* Coupon Card */
+        .coupon-card {
+            background: #fffbeb;
+            border: 1px dashed var(--brand-gold-border);
+            border-radius: 12px;
+            padding: 12px 14px;
+            margin: 12px 0;
+        }
+
+        .coupon-header-text {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11.5px;
+            font-weight: 800;
+            color: var(--brand-gold);
+            margin-bottom: 8px;
+        }
+
+        .coupon-input-group {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 8px;
+        }
+
+        .coupon-input {
+            flex: 1;
+            height: 38px;
+            padding: 0 12px;
+            background: #ffffff;
+            border: 1px solid var(--brand-gold-border);
+            border-radius: 8px;
+            font-size: 12.5px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--text-main);
+            outline: none;
+        }
+
+        .btn-apply-coupon {
+            padding: 0 16px;
+            background: var(--brand-gold);
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: transform 0.15s;
+        }
+
+        .btn-apply-coupon:active {
+            transform: scale(0.95);
+        }
+
+        .quick-coupons-scroll {
+            display: flex;
+            gap: 6px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            padding-bottom: 2px;
+        }
+
+        .quick-coupons-scroll::-webkit-scrollbar {
+            display: none;
+        }
+
+        .coupon-pill {
+            flex-shrink: 0;
+            font-size: 10.5px;
+            font-weight: 700;
+            color: var(--brand-gold);
+            background: #ffffff;
+            border: 1px solid var(--brand-gold-border);
+            padding: 4px 9px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .coupon-pill:active {
+            transform: scale(0.94);
+            background: var(--brand-gold);
+            color: #ffffff;
+        }
+
+        #couponMsg {
+            font-size: 12px;
+            font-weight: 700;
+            margin-top: 6px;
+            display: none;
+        }
+
+        /* Bill Card */
+        .bill-card {
+            background: var(--bg-subtle);
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 12px 14px;
+            margin-bottom: 14px;
+            font-size: 13px;
+        }
+
+        .bill-line {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+            color: var(--text-secondary);
+        }
+
+        .bill-line.discount {
+            color: var(--accent-green);
+            font-weight: 700;
+        }
+
+        .bill-total-line {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid var(--border-light);
+            padding-top: 8px;
+            margin-top: 8px;
+            font-size: 15px;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        .bill-total-price {
+            font-size: 19px;
+            color: var(--brand-crimson);
+        }
+
+        /* WhatsApp Order Button */
+        .btn-whatsapp-order {
+            width: 100%;
+            height: 50px;
+            background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+            color: #ffffff;
+            border: none;
+            border-radius: 12px;
+            font-size: 14.5px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(37, 211, 102, 0.35);
+            transition: transform 0.15s;
+        }
+
+        .btn-whatsapp-order:active {
+            transform: scale(0.97);
+        }
     </style>
 </head>
+
 <body>
+    <canvas id="confettiCanvas"></canvas>
+
+    <div class="toast" id="toastBox">
+        <span id="toastIcon">✨</span>
+        <span id="toastMsg">Notification</span>
+    </div>
+
     <header>
-        <h1>💥 VISHAL FIREWORKS 💥</h1>
-        <p>✨ Roshni aur Khushiyon ka Tyohar - Apno ke sath manayein! ✨</p>
+        <!-- <div class="royal-badge">✦ SIVAKASI DIRECT WHOLESALE ✦</div> -->
+        <h1>💥 VISHAL FIREWORKS</h1>
+        <p class="header-tagline">✨ Premium Quality Fireworks & Festive Sparklers ✨</p>
+
+        <div class="trust-pills">
+            <!-- <span class="trust-pill">🛡️ 100% Sivakasi Standard</span> -->
+            <span class="trust-pill">🚚 Swift Dispatch</span>
+            <span class="trust-pill">💬 WhatsApp Booking</span>
+        </div>
     </header>
 
     <div class="sticky-top-block">
-        <div class="top-container">
-            <div class="search-row">
-                <input type="text" id="search" class="search-input" placeholder="🔍 Search patakha (Anar, Rocket, 12 Shot, Ladi...)" oninput="filterList()">
-                <button class="btn-reset" onclick="resetFilters()">Reset</button>
-            </div>
-            
-            <div class="cat-scroll" id="catBar">
-                <span class="cat-chip active" onclick="setCategory('ALL')">Sabhi (211)</span>
-                <span class="cat-chip" onclick="setCategory('Sparklers')">✨ Sparklers</span>
-                <span class="cat-chip" onclick="setCategory('Chakkar')">🌀 Chakkar</span>
-                <span class="cat-chip" onclick="setCategory('Anar / Pots')">🎆 Anar</span>
-                <span class="cat-chip" onclick="setCategory('Rockets')">🚀 Rockets</span>
-                <span class="cat-chip" onclick="setCategory('Sky Shots')">🌌 Sky Shots</span>
-                <span class="cat-chip" onclick="setCategory('Bombs')">💣 Bombs</span>
-                <span class="cat-chip" onclick="setCategory('Ladi & Bijili')">🧨 Ladi/Bijili</span>
-                <span class="cat-chip" onclick="setCategory('Kids Special')">🎈 Kids Special</span>
-                <span class="cat-chip" onclick="setCategory('Other Crackers')">📦 Others</span>
+        <div class="search-container">
+            <div class="search-box-wrap">
+                <input type="text" id="search" class="search-input"
+                    placeholder="Search patakha (Anar, Rocket, 12 Shot, Ladi...)" oninput="handleSearchInput()">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+                <button class="search-clear-btn" id="searchClearBtn" onclick="clearSearch()"
+                    aria-label="Clear Search">&times;</button>
             </div>
         </div>
-    </div>
 
-    <div class="container">
-        <div class="table-wrap">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Patakha Name</th>
-                        <th class="t-price">Price (₹)</th>
-                        <th class="t-qty">Qty</th>
-                        <th class="t-total">Total</th>
-                        <th class="t-id">#</th>
-                    </tr>
-                </thead>
-                <tbody id="productRows"></tbody>
-            </table>
+        <div class="cat-scroll" id="catBar">
+            <div class="cat-chip active" onclick="setCategory('ALL')"><span>🎇</span> Sabhi (211)</div>
+            <div class="cat-chip" onclick="setCategory('Sparklers')"><span>✨</span> Sparklers</div>
+            <div class="cat-chip" onclick="setCategory('Chakkar')"><span>🌀</span> Chakkar</div>
+            <div class="cat-chip" onclick="setCategory('Anar / Pots')"><span>🎆</span> Anar</div>
+            <div class="cat-chip" onclick="setCategory('Rockets')"><span>🚀</span> Rockets</div>
+            <div class="cat-chip" onclick="setCategory('Sky Shots')"><span>🌌</span> Sky Shots</div>
+            <div class="cat-chip" onclick="setCategory('Bombs')"><span>💣</span> Bombs</div>
+            <div class="cat-chip" onclick="setCategory('Ladi & Bijili')"><span>🧨</span> Ladi/Bijili</div>
+            <div class="cat-chip" onclick="setCategory('Kids Special')"><span>🎈</span> Kids Special</div>
+            <div class="cat-chip" onclick="setCategory('Other Crackers')"><span>📦</span> Others</div>
         </div>
     </div>
 
-    <div class="bottom-bar">
-        <div class="bar-total">
-            <span id="selectedCount">0 items</span>
-            <strong id="barTotal">₹0</strong>
+    <div class="main-container">
+        <div class="results-meta">
+            <span id="resultsCount">Showing 211 items</span>
+            <span id="categoryNameBadge" style="color: var(--brand-crimson); font-weight:700;">All Categories</span>
         </div>
-        <button class="btn-order" onclick="openCheckout()">Order Now &raquo;</button>
+
+        <div class="product-feed" id="productFeed"></div>
     </div>
 
-    <div class="modal" id="orderModal">
-        <div class="modal-content">
-            <div class="modal-title">
-                <span>Aapka Order Details</span>
-                <span class="close" onclick="closeCheckout()">&times;</span>
+    <!-- Floating App-Style Bottom Cart -->
+    <div class="floating-cart-bar" id="floatingCart">
+        <div class="cart-info">
+            <span class="cart-count-pill" id="cartCountPill">
+                <span id="selectedCount">0 ITEMS</span>
+            </span>
+            <span class="cart-total-display" id="barTotal">₹0</span>
+        </div>
+        <button class="btn-view-order" onclick="openCheckout()">
+            <span>Order Now</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                stroke-linecap="round" stroke-linejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+            </svg>
+        </button>
+    </div>
+
+    <!-- Bottom Sheet Checkout Modal -->
+    <div class="modal-overlay" id="orderModal" onclick="handleOverlayClick(event)">
+        <div class="bottom-sheet" id="sheetContent">
+            <div class="sheet-handle"></div>
+
+            <div class="sheet-header">
+                <div class="sheet-title">
+                    <span>🛒</span>
+                    <span>Aapka Order Details</span>
+                </div>
+                <button class="btn-close-sheet" onclick="closeCheckout()">&times;</button>
             </div>
 
             <div class="order-summary-box" id="orderSummary"></div>
 
             <div class="form-group">
-                <label>Customer Name *</label>
-                <input type="text" id="custName" placeholder="Apna pura naam likhein">
-            </div>
-            <div class="form-group">
-                <label>Mobile Number *</label>
-                <input type="tel" id="custPhone" placeholder="10-digit mobile number">
-            </div>
-            <div class="form-group">
-                <label>Delivery / Pickup Address *</label>
-                <textarea id="custAddress" rows="2" placeholder="Ghar ka pata ya area"></textarea>
-            </div>
-
-            <div class="coupon-container">
-                <div class="coupon-title">🏷️ Special Coupon Code</div>
-                <div style="display:flex; gap:6px;">
-                    <input type="text" id="couponInput" placeholder="Coupon daalein" style="flex:1; padding:6px 8px; font-size:11px; border:1px solid #ccc; border-radius:4px; outline:none; text-transform:uppercase; background:#fff;">
-                    <button type="button" onclick="applyCoupon()" style="padding:6px 12px; background:#b71c1c; color:#fff; border:none; border-radius:4px; font-size:11px; font-weight:700; cursor:pointer;">Apply</button>
+                <label class="form-label">Aapka Pura Naam *</label>
+                <div class="input-with-icon">
+                    <svg class="input-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    <input type="text" id="custName" class="app-input" placeholder="Enter full name">
                 </div>
-                <div id="couponMsg" style="font-size:11px; margin-top:5px; display:none;"></div>
             </div>
 
-            <div style="background:#f9f9f9; padding:6px 8px; border-radius:4px; margin-bottom:8px; font-size:12px;">
-                <div style="display:flex; justify-content:space-between; margin-bottom:3px; color:#555;">
+            <div class="form-group">
+                <label class="form-label">WhatsApp Mobile Number *</label>
+                <div class="input-with-icon">
+                    <svg class="input-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path
+                            d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z">
+                        </path>
+                    </svg>
+                    <input type="tel" id="custPhone" class="app-input" placeholder="10-digit mobile number">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Delivery / Pickup Address *</label>
+                <div class="input-with-icon">
+                    <svg class="input-icon" style="top: 14px;" width="15" height="15" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                        <circle cx="12" cy="10" r="3"></circle>
+                    </svg>
+                    <textarea id="custAddress" class="app-textarea" rows="2"
+                        placeholder="Ghar ka pata, gali ya landmark"></textarea>
+                </div>
+            </div>
+
+            <div class="coupon-card">
+                <div class="coupon-header-text">
+                    <span>🏷️ SPECIAL FESTIVE COUPONS</span>
+                    <span>Tap to apply</span>
+                </div>
+
+                <div class="coupon-input-group">
+                    <input type="text" id="couponInput" class="coupon-input" placeholder="Coupon Code">
+                    <button type="button" class="btn-apply-coupon" onclick="applyCoupon()">APPLY</button>
+                </div>
+
+                <div class="quick-coupons-scroll">
+                    <!-- <span class="coupon-pill" onclick="quickApplyCoupon('10DIWALI')">10DIWALI (10%)</span>
+                    <span class="coupon-pill" onclick="quickApplyCoupon('DIWALI20')">DIWALI20 (20%)</span>
+                    <span class="coupon-pill" onclick="quickApplyCoupon('GHOSTRIDER')">GHOSTRIDER (30%)</span>
+                    <span class="coupon-pill" onclick="quickApplyCoupon('GOLI22')">GOLI22 (22%)</span>
+                    <span class="coupon-pill" onclick="quickApplyCoupon('NIT20')">NIT20 (20%)</span> -->
+                </div>
+
+                <div id="couponMsg"></div>
+            </div>
+
+            <div class="bill-card">
+                <div class="bill-line">
                     <span>Order Subtotal:</span>
                     <span id="modalSubtotal">₹0</span>
                 </div>
-                <div id="discountRow" style="display:none; justify-content:space-between; margin-bottom:3px; color:#2e7d32; font-weight:600;">
-                    <span>Total Discount:</span>
+                <div id="discountRow" class="bill-line discount" style="display:none;">
+                    <span>Discount Savings:</span>
                     <span id="modalDiscount">-₹0</span>
                 </div>
-                <div style="display:flex; justify-content:space-between; font-weight:700; font-size:13px; border-top:1px solid #ddd; padding-top:4px;">
-                    <span>Final Payable Total:</span>
-                    <span style="color:#b71c1c;" id="modalTotal">₹0</span>
+                <div class="bill-total-line">
+                    <span>Final Payable Amount:</span>
+                    <span class="bill-total-price" id="modalTotal">₹0</span>
                 </div>
             </div>
 
-            <button class="btn-whatsapp" id="btnSubmitOrder" onclick="processAndSendOrder()">
-                <span>💬 WhatsApp Par Order Send Karein</span>
+            <button class="btn-whatsapp-order" id="btnSubmitOrder" onclick="processAndSendOrder()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path
+                        d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91C2.13 13.66 2.59 15.36 3.45 16.86L2.05 22L7.3 20.62C8.75 21.41 10.38 21.83 12.04 21.83C17.5 21.83 21.95 17.38 21.95 11.92C21.95 9.27 20.92 6.78 19.05 4.91C17.18 3.03 14.69 2 12.04 2M12.05 3.67C14.25 3.67 16.31 4.53 17.87 6.09C19.42 7.65 20.28 9.72 20.28 11.92C20.28 16.46 16.58 20.15 12.04 20.15C10.56 20.15 9.11 19.76 7.85 19L7.55 18.83L4.43 19.65L5.26 16.61L5.06 16.29C4.24 15 3.8 13.47 3.8 11.91C3.81 7.37 7.5 3.67 12.05 3.67M9.53 7.03C9.36 7.03 9.08 7.09 8.84 7.35C8.6 7.61 7.92 8.25 7.92 9.54C7.92 10.83 8.86 12.07 9 12.25C9.13 12.42 10.82 15.03 13.42 16.15C14.04 16.42 14.52 16.58 14.9 16.7C15.52 16.9 16.09 16.87 16.53 16.81C17.03 16.73 18.05 16.19 18.26 15.59C18.47 15 18.47 14.49 18.41 14.39C18.35 14.28 18.18 14.22 17.92 14.09C17.67 13.97 16.42 13.35 16.19 13.27C15.96 13.18 15.79 13.14 15.62 13.4C15.45 13.65 14.97 14.22 14.82 14.39C14.67 14.56 14.53 14.58 14.27 14.45C14.02 14.33 13.2 14.06 12.22 13.19C11.46 12.51 10.95 11.67 10.8 11.42C10.66 11.16 10.79 11.02 10.91 10.9C11.03 10.78 11.17 10.6 11.3 10.45C11.43 10.3 11.48 10.18 11.56 10.01C11.65 9.84 11.6 9.69 11.54 9.57C11.48 9.44 10.99 8.24 10.78 7.75C10.58 7.27 10.38 7.33 10.22 7.33C10.07 7.33 9.9 7.32 9.73 7.32C9.56 7.32 9.53 7.03 9.53 7.03Z" />
+                </svg>
+                <span>WhatsApp Par Order Send Karein</span>
             </button>
+            <div style="text-align: center; margin-top: 10px;">
+                <button type="button" onclick="testGoogleSheetConnection()"
+                    style="background: none; border: none; font-size: 11px; color: #94a3b8; cursor: pointer; text-decoration: underline;">
+                    🧪 Test Google Sheet Sync
+                </button>
+            </div>
         </div>
     </div>
 
     <script>
-        const GOOGLE_SHEET_WEBAPP_URL = ""; 
+        var GOOGLE_SHEET_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbyL2kUJ_7kqI42a_E23gLfd6nV0lnxA3vljiZq2XttK2MEZSIF7X8YpoEqtm1ABnnQ/exec";
 
-        const products = [{"id": 1, "name": "7CM ELECTRIC(RAMS)", "price": 30.0, "category": "Sparklers"}, {"id": 2, "name": "7CM 50/50 (RAMS)", "price": 40.0, "category": "Other Crackers"}, {"id": 3, "name": "7CM CRACK(RAMS)", "price": 40.0, "category": "Other Crackers"}, {"id": 4, "name": "7CM RED(RAMS)", "price": 40.0, "category": "Other Crackers"}, {"id": 5, "name": "10CM CRACKLING (CLSC)", "price": 40.0, "category": "Sparklers"}, {"id": 6, "name": "10CM GREEN(CLSSC)", "price": 30.0, "category": "Sparklers"}, {"id": 7, "name": "10CM RED(CLSSC)", "price": 40.0, "category": "Sparklers"}, {"id": 8, "name": "12CM ELECTRIC(CLSSC)", "price": 40.0, "category": "Sparklers"}, {"id": 9, "name": "12CM CRACKLING (CLSSC)", "price": 40.0, "category": "Sparklers"}, {"id": 10, "name": "12 CM GREEN (RAMS)", "price": 70.0, "category": "Other Crackers"}, {"id": 11, "name": "12CM RED (RAMS)", "price": 70.0, "category": "Other Crackers"}, {"id": 12, "name": "15 CM ELE(CLSSC)", "price": 60.0, "category": "Sparklers"}, {"id": 13, "name": "15CM ELECTRIC(RAMS)", "price": 70.0, "category": "Sparklers"}, {"id": 14, "name": "15 CM CRACKLING(CLSSC)", "price": 60.0, "category": "Sparklers"}, {"id": 15, "name": "15 CM GREEN(CLSSC)", "price": 60.0, "category": "Sparklers"}, {"id": 16, "name": "15CM RED(CLSSC)", "price": 70.0, "category": "Sparklers"}, {"id": 17, "name": "30CM ELE(CLSSC)", "price": 60.0, "category": "Sparklers"}, {"id": 18, "name": "30CM CRACKLING (CLSSC)", "price": 60.0, "category": "Sparklers"}, {"id": 19, "name": "30CM GREEN(CLSSC)", "price": 60.0, "category": "Sparklers"}, {"id": 20, "name": "30CM RED(CLSSC)", "price": 70.0, "category": "Sparklers"}, {"id": 21, "name": "50CM ELECTRIC(RAMS)", "price": 260.0, "category": "Sparklers"}, {"id": 22, "name": "50CM CRACKLING(RAMS)", "price": 310.0, "category": "Sparklers"}, {"id": 23, "name": "100CM ELECTRIC(CLSSC)", "price": 620.0, "category": "Sparklers"}, {"id": 24, "name": "LAZER SHOW(VN)", "price": 400.0, "category": "Other Crackers"}, {"id": 25, "name": "ONE TIME PAASWORD (VN)", "price": 230.0, "category": "Other Crackers"}, {"id": 26, "name": "SPINNER CLUB(VN)", "price": 360.0, "category": "Chakkar"}, {"id": 27, "name": "SPINNER DELUXE(VN)", "price": 500.0, "category": "Chakkar"}, {"id": 28, "name": "SPINNER MIX(VN)", "price": 420.0, "category": "Chakkar"}, {"id": 29, "name": "SPINNER SPECIAL(VN)", "price": 440.0, "category": "Chakkar"}, {"id": 30, "name": "SPINNER SUPER DELUXE(VN)", "price": 580.0, "category": "Chakkar"}, {"id": 31, "name": "SPINNER WORLD(VN)", "price": 400.0, "category": "Chakkar"}, {"id": 32, "name": "COLOUR SPINNER COMBO(VN)", "price": 380.0, "category": "Chakkar"}, {"id": 33, "name": "GROUND CHAKKAR BIG PLASTIC(LIYA)", "price": 90.0, "category": "Chakkar"}, {"id": 34, "name": "GROUND CHAKKAR BIG 25 PC(VISHNU)", "price": 170.0, "category": "Chakkar"}, {"id": 35, "name": "GROUND CHAKKAR DLX(VISHNU)", "price": 290.0, "category": "Chakkar"}, {"id": 36, "name": "GROUND CHAKKAR SPECIAL(KAMA)", "price": 120.0, "category": "Chakkar"}, {"id": 37, "name": "GROUND CHAKKAR BIG 10 PC(KAMA)", "price": 70.0, "category": "Chakkar"}, {"id": 38, "name": "GROUND CHAKKAR DELUXE (KAMA)", "price": 240.0, "category": "Chakkar"}, {"id": 39, "name": "GROUND CHAKKAR SPL(YESBRO)", "price": 170.0, "category": "Chakkar"}, {"id": 40, "name": "GROUND CHAKKAR DELUXE (YESBRO)", "price": 310.0, "category": "Chakkar"}, {"id": 41, "name": "WIN WHEEL MAX(YES BRO)", "price": 350.0, "category": "Chakkar"}, {"id": 42, "name": "WIN WHEEL SUPER(YESBRO)", "price": 440.0, "category": "Chakkar"}, {"id": 43, "name": "GROUND CHAKKAR DELUXE(SS)", "price": 280.0, "category": "Chakkar"}, {"id": 44, "name": "GROUND CHAKKAR SPECIAL(SS)", "price": 170.0, "category": "Chakkar"}, {"id": 45, "name": "45 CM GROUND CHAKKAR (COCK)", "price": 320.0, "category": "Chakkar"}, {"id": 46, "name": "70CM GROUND CHAKKAR (COCK)", "price": 540.0, "category": "Chakkar"}, {"id": 47, "name": "WHISTLING WHEEL(COCK)", "price": 320.0, "category": "Chakkar"}, {"id": 48, "name": "FLOWERPOT BIG(COCK)", "price": 320.0, "category": "Anar / Pots"}, {"id": 49, "name": "FLOWERPOT DELUXE (COCK)", "price": 760.0, "category": "Anar / Pots"}, {"id": 50, "name": "FLOWERPOT SPL(COCK)", "price": 570.0, "category": "Anar / Pots"}, {"id": 51, "name": "FLOWERPOT SPECIAL(SS)", "price": 230.0, "category": "Anar / Pots"}, {"id": 52, "name": "FLOWERPOT ASHOKA(SS)", "price": 290.0, "category": "Anar / Pots"}, {"id": 53, "name": "COLOURKOTI (SS)", "price": 430.0, "category": "Anar / Pots"}, {"id": 54, "name": "RANGEELA(SS)", "price": 450.0, "category": "Other Crackers"}, {"id": 55, "name": "FLOWERPOT SPECIAL(YESBRO)", "price": 250.0, "category": "Anar / Pots"}, {"id": 56, "name": "FLOWERPOT GAINT(YB)", "price": 430.0, "category": "Anar / Pots"}, {"id": 57, "name": "COLOURKOTI (YB)", "price": 550.0, "category": "Anar / Pots"}, {"id": 58, "name": "COLOURKOTI RED(YESBRO)", "price": 690.0, "category": "Anar / Pots"}, {"id": 59, "name": "COLOURKOTI DELUXE (YESBRO)", "price": 920.0, "category": "Anar / Pots"}, {"id": 60, "name": "FLOWERPOT RAPID (VN)", "price": 1330.0, "category": "Anar / Pots"}, {"id": 61, "name": "COLOUR CONE(VN)", "price": 1250.0, "category": "Anar / Pots"}, {"id": 62, "name": "DON WORLD(VN)", "price": 1490.0, "category": "Other Crackers"}, {"id": 63, "name": "COLOUR WORLD (VN)", "price": 1630.0, "category": "Other Crackers"}, {"id": 64, "name": "FLOWERPOT SMALL(KAMA)", "price": 110.0, "category": "Anar / Pots"}, {"id": 65, "name": "FLOWERPOT SPECIAL(KAMA)", "price": 140.0, "category": "Anar / Pots"}, {"id": 66, "name": "FLOWERPOT ASHOKA (KAMA)", "price": 200.0, "category": "Anar / Pots"}, {"id": 67, "name": "COLORKOTI (KAMA)", "price": 350.0, "category": "Anar / Pots"}, {"id": 68, "name": "FLOWERPOT BIG(VISHNU)", "price": 130.0, "category": "Anar / Pots"}, {"id": 69, "name": "FLOWERPOT SPL(VISHNU)", "price": 190.0, "category": "Anar / Pots"}, {"id": 70, "name": "FLOWERPOT ASHOKA (VISHNU)", "price": 240.0, "category": "Anar / Pots"}, {"id": 71, "name": "COLOUR KOTI (VISHNU)", "price": 400.0, "category": "Anar / Pots"}, {"id": 72, "name": "COLOURKOTI (SPCL)", "price": 400.0, "category": "Anar / Pots"}, {"id": 73, "name": "COLOURKOTI (EVE)", "price": 880.0, "category": "Anar / Pots"}, {"id": 74, "name": "FLOWERPOT GAINT(STD)", "price": 720.0, "category": "Anar / Pots"}, {"id": 75, "name": "FLOWERPOT DELUXE 2PC(VD)", "price": 210.0, "category": "Anar / Pots"}, {"id": 76, "name": "GREEN BERRY MEGA ANAR (SONNY)", "price": 1630.0, "category": "Anar / Pots"}, {"id": 77, "name": "PEACOCK MULTICOLOUR", "price": 430.0, "category": "Kids Special"}, {"id": 78, "name": "MINION(STARINDIYA)", "price": 200.0, "category": "Other Crackers"}, {"id": 79, "name": "ANGRY BIRD(STAR INDIYA)", "price": 200.0, "category": "Other Crackers"}, {"id": 80, "name": "BIJILI GOLD 50 PC", "price": 40.0, "category": "Ladi & Bijili"}, {"id": 81, "name": "BUILI 50PC(WHITE)", "price": 30.0, "category": "Other Crackers"}, {"id": 82, "name": "GOLD BIJILI STRIPPED50PC(SS)", "price": 60.0, "category": "Ladi & Bijili"}, {"id": 83, "name": "BIJILI RED 100 PC(LC)", "price": 80.0, "category": "Ladi & Bijili"}, {"id": 84, "name": "GOLD BIJILI STRIPPED 100PC(SS)", "price": 100.0, "category": "Ladi & Bijili"}, {"id": 85, "name": "BULLET BOMB(GEMS)", "price": 50.0, "category": "Bombs"}, {"id": 86, "name": "BULLET SMALL", "price": 30.0, "category": "Bombs"}, {"id": 87, "name": "BULLET BOMB(SS)", "price": 70.0, "category": "Bombs"}, {"id": 88, "name": "BULLET BOMB DELUXE(SS)", "price": 100.0, "category": "Bombs"}, {"id": 89, "name": "MEGA BULLET(SS)", "price": 140.0, "category": "Bombs"}, {"id": 90, "name": "KING OF KING BOMB", "price": 250.0, "category": "Bombs"}, {"id": 91, "name": "BOOM BOMB (STANDARD)", "price": 380.0, "category": "Bombs"}, {"id": 92, "name": "PARTY CANDLE(SS)", "price": 240.0, "category": "Kids Special"}, {"id": 93, "name": "1.5\" RASSI (STD)", "price": 90.0, "category": "Bombs"}, {"id": 94, "name": "1.5 RASSI (MAHA)", "price": 50.0, "category": "Bombs"}, {"id": 95, "name": "1.5FT RAASSI (VGR)", "price": 50.0, "category": "Other Crackers"}, {"id": 96, "name": "4FT RASSI(JYOTHI)", "price": 160.0, "category": "Bombs"}, {"id": 97, "name": "PULLING THREAD", "price": 10.0, "category": "Kids Special"}, {"id": 98, "name": "COLOURFLASH (VN)", "price": 440.0, "category": "Other Crackers"}, {"id": 99, "name": "2 SOUND CRACKER(JAYA)", "price": 50.0, "category": "Bombs"}, {"id": 100, "name": "SNAKE TABLET", "price": 20.0, "category": "Kids Special"}, {"id": 101, "name": "1000 WALA(ONE)", "price": 340.0, "category": "Ladi & Bijili"}, {"id": 102, "name": "2000 WALA(ONE)", "price": 680.0, "category": "Ladi & Bijili"}, {"id": 103, "name": "5000 WALA(ONE)", "price": 1690.0, "category": "Ladi & Bijili"}, {"id": 104, "name": "10000 WALA(ONE)", "price": 3380.0, "category": "Ladi & Bijili"}, {"id": 105, "name": "GANGA JAMUNA (SHINE STAR)", "price": 100.0, "category": "Other Crackers"}, {"id": 106, "name": "GANGA JAMUNA SPL (RAMA)", "price": 170.0, "category": "Other Crackers"}, {"id": 107, "name": "FLOWER BOMB(STD)", "price": 300.0, "category": "Bombs"}, {"id": 108, "name": "CHUTU PUTU (SS)", "price": 150.0, "category": "Kids Special"}, {"id": 109, "name": "SUN DROP(SS)", "price": 180.0, "category": "Kids Special"}, {"id": 110, "name": "MOON DROP(SS)", "price": 170.0, "category": "Kids Special"}, {"id": 111, "name": "STARDROP(SS)", "price": 170.0, "category": "Kids Special"}, {"id": 112, "name": "COCKTAIL FOUNTAIN(SS)", "price": 940.0, "category": "Anar / Pots"}, {"id": 113, "name": "7 SHOTS(SS)", "price": 240.0, "category": "Sky Shots"}, {"id": 114, "name": "7 SHOTS(STD)", "price": 320.0, "category": "Sky Shots"}, {"id": 115, "name": "7 SHOTS (UV BOX)", "price": 190.0, "category": "Sky Shots"}, {"id": 116, "name": "PANCH AWTHAR(CORO)", "price": 440.0, "category": "Other Crackers"}, {"id": 117, "name": "PAANDAV (STD)", "price": 390.0, "category": "Other Crackers"}, {"id": 118, "name": "7 SHOTS (YES BRO)", "price": 280.0, "category": "Sky Shots"}, {"id": 119, "name": "ROBO MIX(SS)", "price": 270.0, "category": "Other Crackers"}, {"id": 120, "name": "NASA ROCKET(SS)", "price": 140.0, "category": "Rockets"}, {"id": 121, "name": "LUNIK ROCKET(VISHNU)", "price": 230.0, "category": "Rockets"}, {"id": 122, "name": "LUNIK ROCKET(COCK)", "price": 560.0, "category": "Rockets"}, {"id": 123, "name": "LUNIK ROCKET(SS)", "price": 290.0, "category": "Rockets"}, {"id": 124, "name": "M12 ROCKET(SS)", "price": 290.0, "category": "Rockets"}, {"id": 125, "name": "FX3 ROCKET(SS)", "price": 320.0, "category": "Rockets"}, {"id": 126, "name": "RAJDHANI ROCKET(SS)", "price": 360.0, "category": "Rockets"}, {"id": 127, "name": "CRACKLING LUNIK ROCKET(SS/VD)", "price": 390.0, "category": "Rockets"}, {"id": 128, "name": "BABY ROCKET(VISHNU)", "price": 90.0, "category": "Rockets"}, {"id": 129, "name": "ROCKET BOMB (VISHNU)", "price": 130.0, "category": "Rockets"}, {"id": 130, "name": "2 SOUND ROCKET(VISHNU)", "price": 220.0, "category": "Rockets"}, {"id": 131, "name": "3 SOUND ROCKET(VISHNU)", "price": 230.0, "category": "Rockets"}, {"id": 132, "name": "TOPAZ ROCKET(CORO)", "price": 250.0, "category": "Rockets"}, {"id": 133, "name": "RAINBOW ROCKET(STD)", "price": 280.0, "category": "Rockets"}, {"id": 134, "name": "ROHINI ROCKET(STD)", "price": 520.0, "category": "Rockets"}, {"id": 135, "name": "WHISTLING ROCKET(SHANA)", "price": 370.0, "category": "Rockets"}, {"id": 136, "name": "2 SOUND BOMB (LAVYANA)", "price": 60.0, "category": "Bombs"}, {"id": 137, "name": "POWERPOINT (VN)", "price": 1020.0, "category": "Other Crackers"}, {"id": 138, "name": "TOP CODE(VN)", "price": 920.0, "category": "Other Crackers"}, {"id": 139, "name": "6 SINGLE BOMB", "price": 100.0, "category": "Bombs"}, {"id": 140, "name": "5\" SINGLE SOUND CRACKER", "price": 90.0, "category": "Bombs"}, {"id": 141, "name": "4.5\" SINGLE SOUND CRACKER", "price": 80.0, "category": "Bombs"}, {"id": 142, "name": "BUTTERFLY(ARYAN)", "price": 140.0, "category": "Kids Special"}, {"id": 143, "name": "BUTTERFLY(RIO)", "price": 130.0, "category": "Kids Special"}, {"id": 144, "name": "4 COLOUR PENCIL(STD)", "price": 480.0, "category": "Other Crackers"}, {"id": 145, "name": "HELICOPTER(AMAN)", "price": 250.0, "category": "Kids Special"}, {"id": 146, "name": "BUTTERFLY(VISHNU)", "price": 250.0, "category": "Kids Special"}, {"id": 147, "name": "BAMBARA (VISHNU)", "price": 270.0, "category": "Other Crackers"}, {"id": 148, "name": "DRONE (VISHNU)", "price": 280.0, "category": "Kids Special"}, {"id": 149, "name": "DRONE(CORO)", "price": 390.0, "category": "Kids Special"}, {"id": 150, "name": "CRACKLING TREE (MERCURY)", "price": 950.0, "category": "Other Crackers"}, {"id": 151, "name": "CIGRATE BOMB", "price": 240.0, "category": "Bombs"}, {"id": 152, "name": "WONDER THROW", "price": 300.0, "category": "Other Crackers"}, {"id": 153, "name": "KITE", "price": 40.0, "category": "Kids Special"}, {"id": 154, "name": "KITKAT", "price": 50.0, "category": "Kids Special"}, {"id": 155, "name": "CHITPUT (VISHNU/LC)", "price": 130.0, "category": "Kids Special"}, {"id": 156, "name": "BAMBARA (LC)", "price": 200.0, "category": "Other Crackers"}, {"id": 157, "name": "28 CHORSA SPL", "price": 40.0, "category": "Ladi & Bijili"}, {"id": 158, "name": "28 GAINT MBR", "price": 50.0, "category": "Other Crackers"}, {"id": 159, "name": "24 DLX MBR", "price": 90.0, "category": "Ladi & Bijili"}, {"id": 160, "name": "24 DLX SPL", "price": 90.0, "category": "Ladi & Bijili"}, {"id": 161, "name": "50 DLX SPL", "price": 200.0, "category": "Ladi & Bijili"}, {"id": 162, "name": "100 DLX", "price": 440.0, "category": "Ladi & Bijili"}, {"id": 163, "name": "1000 WALA (SPCL)", "price": 730.0, "category": "Ladi & Bijili"}, {"id": 164, "name": "12 STAR (SS)", "price": 460.0, "category": "Sky Shots"}, {"id": 165, "name": "12 SHOT(COCK)", "price": 550.0, "category": "Sky Shots"}, {"id": 166, "name": "12 SHOT(JAWA)", "price": 270.0, "category": "Sky Shots"}, {"id": 167, "name": "12 SHOT POPEYE (SONNY)", "price": 990.0, "category": "Sky Shots"}, {"id": 168, "name": "12 SHOTS SILVER ARMY (SONY)", "price": 540.0, "category": "Sky Shots"}, {"id": 169, "name": "16 COLOUR PAPER SHOT(STD)", "price": 950.0, "category": "Sky Shots"}, {"id": 170, "name": "12 SHOT MUSICZ RIP(NYAGI)", "price": 950.0, "category": "Sky Shots"}, {"id": 171, "name": "15 MULTICOLOUR SHOTS (JAWA)", "price": 640.0, "category": "Sky Shots"}, {"id": 172, "name": "30 MULTICOLOUR SHOTS (JAWA)", "price": 1050.0, "category": "Sky Shots"}, {"id": 173, "name": "30 MULTICOLOUR SHOTS (VINAYAK)", "price": 1250.0, "category": "Sky Shots"}, {"id": 174, "name": "30 MULTI COLOUR SHOTS (LIYA)", "price": 1380.0, "category": "Sky Shots"}, {"id": 175, "name": "SKY SHOW 30 SHOTS(SS)", "price": 1430.0, "category": "Sky Shots"}, {"id": 176, "name": "60 MULTICOLOUR SHOTS (JAWA)", "price": 2000.0, "category": "Sky Shots"}, {"id": 177, "name": "60 MULTICOLOUR SHOTS (VINAYAK)", "price": 2250.0, "category": "Sky Shots"}, {"id": 178, "name": "100 MULTI COLOUR SHOTS HOT N SPICY(SS)", "price": 3850.0, "category": "Sky Shots"}, {"id": 179, "name": "100 MULTICOLOUR SHOTS ULTRA DELUX(SS)", "price": 4000.0, "category": "Sky Shots"}, {"id": 180, "name": "120 MULTICOLOUR SHOTS (JAWA)", "price": 4000.0, "category": "Sky Shots"}, {"id": 181, "name": "120 MULTICOLOUR SHOTS (VINAYAK)", "price": 4400.0, "category": "Sky Shots"}, {"id": 182, "name": "120 MULTICOLOUR SHOTS STAR SHOW (SS)", "price": 4350.0, "category": "Sky Shots"}, {"id": 183, "name": "240 MULTICOLOUR SHOTS (JAWA)", "price": 7250.0, "category": "Sky Shots"}, {"id": 184, "name": "10*10 MULTI COLOUR(LIYA)", "price": 8750.0, "category": "Other Crackers"}, {"id": 185, "name": "12 STEP 4\" PIPE(LIYA)", "price": 800.0, "category": "Sky Shots"}, {"id": 186, "name": "SNAKE EYE 6\" PIPE(VN)", "price": 4000.0, "category": "Sky Shots"}, {"id": 187, "name": "2\" 3 PC PIPE (JAWA)", "price": 490.0, "category": "Sky Shots"}, {"id": 188, "name": "2\" SINGLE PIPE (JAWA)", "price": 190.0, "category": "Sky Shots"}, {"id": 189, "name": "2\" SINGLE PIPE MIX(STD)", "price": 250.0, "category": "Sky Shots"}, {"id": 190, "name": "3.5\" PIPE MIX(NSV)", "price": 730.0, "category": "Sky Shots"}, {"id": 191, "name": "3.5\" SINGLE UV PIPE(JAWA)", "price": 630.0, "category": "Sky Shots"}, {"id": 192, "name": "3.5\" PIPE(INF)", "price": 990.0, "category": "Sky Shots"}, {"id": 193, "name": "3.5 PIPE MIX(COCK)", "price": 1200.0, "category": "Sky Shots"}, {"id": 194, "name": "BLOSSOM(COCK)", "price": 1080.0, "category": "Sky Shots"}, {"id": 195, "name": "GREEN COSCO(COCK)", "price": 1150.0, "category": "Sky Shots"}, {"id": 196, "name": "TRIPLE TREAT (INF)", "price": 2750.0, "category": "Other Crackers"}, {"id": 197, "name": "ROLLER COASTER 4\" 2PC PIPE(ANIL)", "price": 2450.0, "category": "Sky Shots"}, {"id": 198, "name": "SPIDERMAN 4\" PIPE 2PC(LIMA)", "price": 1950.0, "category": "Sky Shots"}, {"id": 199, "name": "POP POP 25PC DANA", "price": 20.0, "category": "Kids Special"}, {"id": 200, "name": "POP POP 35 DANA", "price": 30.0, "category": "Kids Special"}, {"id": 201, "name": "POP POP PRIME", "price": 20.0, "category": "Kids Special"}, {"id": 202, "name": "Top Tiger NO6 SPL", "price": 370.0, "category": "Bombs"}, {"id": 203, "name": "Top Tiger NO 5 SPCL", "price": 350.0, "category": "Bombs"}, {"id": 204, "name": "Top Tiger NO 4 SPL", "price": 320.0, "category": "Bombs"}, {"id": 205, "name": "Top Tiger NO 3", "price": 240.0, "category": "Bombs"}, {"id": 206, "name": "Top Tiger NO 2", "price": 200.0, "category": "Bombs"}, {"id": 207, "name": "SHORSHER NO 6 SPL", "price": 430.0, "category": "Bombs"}, {"id": 208, "name": "SHORSHER NOS", "price": 400.0, "category": "Bombs"}, {"id": 209, "name": "SIMMBA NO 6", "price": 570.0, "category": "Bombs"}, {"id": 210, "name": "CHEETAH NO 10 SPL", "price": 620.0, "category": "Bombs"}, {"id": 211, "name": "ELEPHANT BOMB", "price": 620.0, "category": "Bombs"}];
+        const products = [{ "id": 1, "name": "7CM ELECTRIC(RAMS)", "price": 30.0, "category": "Sparklers" }, { "id": 2, "name": "7CM 50/50 (RAMS)", "price": 40.0, "category": "Other Crackers" }, { "id": 3, "name": "7CM CRACK(RAMS)", "price": 40.0, "category": "Other Crackers" }, { "id": 4, "name": "7CM RED(RAMS)", "price": 40.0, "category": "Other Crackers" }, { "id": 5, "name": "10CM CRACKLING (CLSC)", "price": 40.0, "category": "Sparklers" }, { "id": 6, "name": "10CM GREEN(CLSSC)", "price": 30.0, "category": "Sparklers" }, { "id": 7, "name": "10CM RED(CLSSC)", "price": 40.0, "category": "Sparklers" }, { "id": 8, "name": "12CM ELECTRIC(CLSSC)", "price": 40.0, "category": "Sparklers" }, { "id": 9, "name": "12CM CRACKLING (CLSSC)", "price": 40.0, "category": "Sparklers" }, { "id": 10, "name": "12 CM GREEN (RAMS)", "price": 70.0, "category": "Other Crackers" }, { "id": 11, "name": "12CM RED (RAMS)", "price": 70.0, "category": "Other Crackers" }, { "id": 12, "name": "15 CM ELE(CLSSC)", "price": 60.0, "category": "Sparklers" }, { "id": 13, "name": "15CM ELECTRIC(RAMS)", "price": 70.0, "category": "Sparklers" }, { "id": 14, "name": "15 CM CRACKLING(CLSSC)", "price": 60.0, "category": "Sparklers" }, { "id": 15, "name": "15 CM GREEN(CLSSC)", "price": 60.0, "category": "Sparklers" }, { "id": 16, "name": "15CM RED(CLSSC)", "price": 70.0, "category": "Sparklers" }, { "id": 17, "name": "30CM ELE(CLSSC)", "price": 60.0, "category": "Sparklers" }, { "id": 18, "name": "30CM CRACKLING (CLSSC)", "price": 60.0, "category": "Sparklers" }, { "id": 19, "name": "30CM GREEN(CLSSC)", "price": 60.0, "category": "Sparklers" }, { "id": 20, "name": "30CM RED(CLSSC)", "price": 70.0, "category": "Sparklers" }, { "id": 21, "name": "50CM ELECTRIC(RAMS)", "price": 260.0, "category": "Sparklers" }, { "id": 22, "name": "50CM CRACKLING(RAMS)", "price": 310.0, "category": "Sparklers" }, { "id": 23, "name": "100CM ELECTRIC(CLSSC)", "price": 620.0, "category": "Sparklers" }, { "id": 24, "name": "LAZER SHOW(VN)", "price": 400.0, "category": "Other Crackers" }, { "id": 25, "name": "ONE TIME PAASWORD (VN)", "price": 230.0, "category": "Other Crackers" }, { "id": 26, "name": "SPINNER CLUB(VN)", "price": 360.0, "category": "Chakkar" }, { "id": 27, "name": "SPINNER DELUXE(VN)", "price": 500.0, "category": "Chakkar" }, { "id": 28, "name": "SPINNER MIX(VN)", "price": 420.0, "category": "Chakkar" }, { "id": 29, "name": "SPINNER SPECIAL(VN)", "price": 440.0, "category": "Chakkar" }, { "id": 30, "name": "SPINNER SUPER DELUXE(VN)", "price": 580.0, "category": "Chakkar" }, { "id": 31, "name": "SPINNER WORLD(VN)", "price": 400.0, "category": "Chakkar" }, { "id": 32, "name": "COLOUR SPINNER COMBO(VN)", "price": 380.0, "category": "Chakkar" }, { "id": 33, "name": "GROUND CHAKKAR BIG PLASTIC(LIYA)", "price": 90.0, "category": "Chakkar" }, { "id": 34, "name": "GROUND CHAKKAR BIG 25 PC(VISHNU)", "price": 170.0, "category": "Chakkar" }, { "id": 35, "name": "GROUND CHAKKAR DLX(VISHNU)", "price": 290.0, "category": "Chakkar" }, { "id": 36, "name": "GROUND CHAKKAR SPECIAL(KAMA)", "price": 120.0, "category": "Chakkar" }, { "id": 37, "name": "GROUND CHAKKAR BIG 10 PC(KAMA)", "price": 70.0, "category": "Chakkar" }, { "id": 38, "name": "GROUND CHAKKAR DELUXE (KAMA)", "price": 240.0, "category": "Chakkar" }, { "id": 39, "name": "GROUND CHAKKAR SPL(YESBRO)", "price": 170.0, "category": "Chakkar" }, { "id": 40, "name": "GROUND CHAKKAR DELUXE (YESBRO)", "price": 310.0, "category": "Chakkar" }, { "id": 41, "name": "WIN WHEEL MAX(YES BRO)", "price": 350.0, "category": "Chakkar" }, { "id": 42, "name": "WIN WHEEL SUPER(YESBRO)", "price": 440.0, "category": "Chakkar" }, { "id": 43, "name": "GROUND CHAKKAR DELUXE(SS)", "price": 280.0, "category": "Chakkar" }, { "id": 44, "name": "GROUND CHAKKAR SPECIAL(SS)", "price": 170.0, "category": "Chakkar" }, { "id": 45, "name": "45 CM GROUND CHAKKAR (COCK)", "price": 320.0, "category": "Chakkar" }, { "id": 46, "name": "70CM GROUND CHAKKAR (COCK)", "price": 540.0, "category": "Chakkar" }, { "id": 47, "name": "WHISTLING WHEEL(COCK)", "price": 320.0, "category": "Chakkar" }, { "id": 48, "name": "FLOWERPOT BIG(COCK)", "price": 320.0, "category": "Anar / Pots" }, { "id": 49, "name": "FLOWERPOT DELUXE (COCK)", "price": 760.0, "category": "Anar / Pots" }, { "id": 50, "name": "FLOWERPOT SPL(COCK)", "price": 570.0, "category": "Anar / Pots" }, { "id": 51, "name": "FLOWERPOT SPECIAL(SS)", "price": 230.0, "category": "Anar / Pots" }, { "id": 52, "name": "FLOWERPOT ASHOKA(SS)", "price": 290.0, "category": "Anar / Pots" }, { "id": 53, "name": "COLOURKOTI (SS)", "price": 430.0, "category": "Anar / Pots" }, { "id": 54, "name": "RANGEELA(SS)", "price": 450.0, "category": "Other Crackers" }, { "id": 55, "name": "FLOWERPOT SPECIAL(YESBRO)", "price": 250.0, "category": "Anar / Pots" }, { "id": 56, "name": "FLOWERPOT GAINT(YB)", "price": 430.0, "category": "Anar / Pots" }, { "id": 57, "name": "COLOURKOTI (YB)", "price": 550.0, "category": "Anar / Pots" }, { "id": 58, "name": "COLOURKOTI RED(YESBRO)", "price": 690.0, "category": "Anar / Pots" }, { "id": 59, "name": "COLOURKOTI DELUXE (YESBRO)", "price": 920.0, "category": "Anar / Pots" }, { "id": 60, "name": "FLOWERPOT RAPID (VN)", "price": 1330.0, "category": "Anar / Pots" }, { "id": 61, "name": "COLOUR CONE(VN)", "price": 1250.0, "category": "Anar / Pots" }, { "id": 62, "name": "DON WORLD(VN)", "price": 1490.0, "category": "Other Crackers" }, { "id": 63, "name": "COLOUR WORLD (VN)", "price": 1630.0, "category": "Other Crackers" }, { "id": 64, "name": "FLOWERPOT SMALL(KAMA)", "price": 110.0, "category": "Anar / Pots" }, { "id": 65, "name": "FLOWERPOT SPECIAL(KAMA)", "price": 140.0, "category": "Anar / Pots" }, { "id": 66, "name": "FLOWERPOT ASHOKA (KAMA)", "price": 200.0, "category": "Anar / Pots" }, { "id": 67, "name": "COLORKOTI (KAMA)", "price": 350.0, "category": "Anar / Pots" }, { "id": 68, "name": "FLOWERPOT BIG(VISHNU)", "price": 130.0, "category": "Anar / Pots" }, { "id": 69, "name": "FLOWERPOT SPL(VISHNU)", "price": 190.0, "category": "Anar / Pots" }, { "id": 70, "name": "FLOWERPOT ASHOKA (VISHNU)", "price": 240.0, "category": "Anar / Pots" }, { "id": 71, "name": "COLOUR KOTI (VISHNU)", "price": 400.0, "category": "Anar / Pots" }, { "id": 72, "name": "COLOURKOTI (SPCL)", "price": 400.0, "category": "Anar / Pots" }, { "id": 73, "name": "COLOURKOTI (EVE)", "price": 880.0, "category": "Anar / Pots" }, { "id": 74, "name": "FLOWERPOT GAINT(STD)", "price": 720.0, "category": "Anar / Pots" }, { "id": 75, "name": "FLOWERPOT DELUXE 2PC(VD)", "price": 210.0, "category": "Anar / Pots" }, { "id": 76, "name": "GREEN BERRY MEGA ANAR (SONNY)", "price": 1630.0, "category": "Anar / Pots" }, { "id": 77, "name": "PEACOCK MULTICOLOUR", "price": 430.0, "category": "Kids Special" }, { "id": 78, "name": "MINION(STARINDIYA)", "price": 200.0, "category": "Other Crackers" }, { "id": 79, "name": "ANGRY BIRD(STAR INDIYA)", "price": 200.0, "category": "Other Crackers" }, { "id": 80, "name": "BIJILI GOLD 50 PC", "price": 40.0, "category": "Ladi & Bijili" }, { "id": 81, "name": "BUILI 50PC(WHITE)", "price": 30.0, "category": "Other Crackers" }, { "id": 82, "name": "GOLD BIJILI STRIPPED50PC(SS)", "price": 60.0, "category": "Ladi & Bijili" }, { "id": 83, "name": "BIJILI RED 100 PC(LC)", "price": 80.0, "category": "Ladi & Bijili" }, { "id": 84, "name": "GOLD BIJILI STRIPPED 100PC(SS)", "price": 100.0, "category": "Ladi & Bijili" }, { "id": 85, "name": "BULLET BOMB(GEMS)", "price": 50.0, "category": "Bombs" }, { "id": 86, "name": "BULLET SMALL", "price": 30.0, "category": "Bombs" }, { "id": 87, "name": "BULLET BOMB(SS)", "price": 70.0, "category": "Bombs" }, { "id": 88, "name": "BULLET BOMB DELUXE(SS)", "price": 100.0, "category": "Bombs" }, { "id": 89, "name": "MEGA BULLET(SS)", "price": 140.0, "category": "Bombs" }, { "id": 90, "name": "KING OF KING BOMB", "price": 250.0, "category": "Bombs" }, { "id": 91, "name": "BOOM BOMB (STANDARD)", "price": 380.0, "category": "Bombs" }, { "id": 92, "name": "PARTY CANDLE(SS)", "price": 240.0, "category": "Kids Special" }, { "id": 93, "name": "1.5\" RASSI (STD)", "price": 90.0, "category": "Bombs" }, { "id": 94, "name": "1.5 RASSI (MAHA)", "price": 50.0, "category": "Bombs" }, { "id": 95, "name": "1.5FT RAASSI (VGR)", "price": 50.0, "category": "Other Crackers" }, { "id": 96, "name": "4FT RASSI(JYOTHI)", "price": 160.0, "category": "Bombs" }, { "id": 97, "name": "PULLING THREAD", "price": 10.0, "category": "Kids Special" }, { "id": 98, "name": "COLOURFLASH (VN)", "price": 440.0, "category": "Other Crackers" }, { "id": 99, "name": "2 SOUND CRACKER(JAYA)", "price": 50.0, "category": "Bombs" }, { "id": 100, "name": "SNAKE TABLET", "price": 20.0, "category": "Kids Special" }, { "id": 101, "name": "1000 WALA(ONE)", "price": 340.0, "category": "Ladi & Bijili" }, { "id": 102, "name": "2000 WALA(ONE)", "price": 680.0, "category": "Ladi & Bijili" }, { "id": 103, "name": "5000 WALA(ONE)", "price": 1690.0, "category": "Ladi & Bijili" }, { "id": 104, "name": "10000 WALA(ONE)", "price": 3380.0, "category": "Ladi & Bijili" }, { "id": 105, "name": "GANGA JAMUNA (SHINE STAR)", "price": 100.0, "category": "Other Crackers" }, { "id": 106, "name": "GANGA JAMUNA SPL (RAMA)", "price": 170.0, "category": "Other Crackers" }, { "id": 107, "name": "FLOWER BOMB(STD)", "price": 300.0, "category": "Bombs" }, { "id": 108, "name": "CHUTU PUTU (SS)", "price": 150.0, "category": "Kids Special" }, { "id": 109, "name": "SUN DROP(SS)", "price": 180.0, "category": "Kids Special" }, { "id": 110, "name": "MOON DROP(SS)", "price": 170.0, "category": "Kids Special" }, { "id": 111, "name": "STARDROP(SS)", "price": 170.0, "category": "Kids Special" }, { "id": 112, "name": "COCKTAIL FOUNTAIN(SS)", "price": 940.0, "category": "Anar / Pots" }, { "id": 113, "name": "7 SHOTS(SS)", "price": 240.0, "category": "Sky Shots" }, { "id": 114, "name": "7 SHOTS(STD)", "price": 320.0, "category": "Sky Shots" }, { "id": 115, "name": "7 SHOTS (UV BOX)", "price": 190.0, "category": "Sky Shots" }, { "id": 116, "name": "PANCH AWTHAR(CORO)", "price": 440.0, "category": "Other Crackers" }, { "id": 117, "name": "PAANDAV (STD)", "price": 390.0, "category": "Other Crackers" }, { "id": 118, "name": "7 SHOTS (YES BRO)", "price": 280.0, "category": "Sky Shots" }, { "id": 119, "name": "ROBO MIX(SS)", "price": 270.0, "category": "Other Crackers" }, { "id": 120, "name": "NASA ROCKET(SS)", "price": 140.0, "category": "Rockets" }, { "id": 121, "name": "LUNIK ROCKET(VISHNU)", "price": 230.0, "category": "Rockets" }, { "id": 122, "name": "LUNIK ROCKET(COCK)", "price": 560.0, "category": "Rockets" }, { "id": 123, "name": "LUNIK ROCKET(SS)", "price": 290.0, "category": "Rockets" }, { "id": 124, "name": "M12 ROCKET(SS)", "price": 290.0, "category": "Rockets" }, { "id": 125, "name": "FX3 ROCKET(SS)", "price": 320.0, "category": "Rockets" }, { "id": 126, "name": "RAJDHANI ROCKET(SS)", "price": 360.0, "category": "Rockets" }, { "id": 127, "name": "CRACKLING LUNIK ROCKET(SS/VD)", "price": 390.0, "category": "Rockets" }, { "id": 128, "name": "BABY ROCKET(VISHNU)", "price": 90.0, "category": "Rockets" }, { "id": 129, "name": "ROCKET BOMB (VISHNU)", "price": 130.0, "category": "Rockets" }, { "id": 130, "name": "2 SOUND ROCKET(VISHNU)", "price": 220.0, "category": "Rockets" }, { "id": 131, "name": "3 SOUND ROCKET(VISHNU)", "price": 230.0, "category": "Rockets" }, { "id": 132, "name": "TOPAZ ROCKET(CORO)", "price": 250.0, "category": "Rockets" }, { "id": 133, "name": "RAINBOW ROCKET(STD)", "price": 280.0, "category": "Rockets" }, { "id": 134, "name": "ROHINI ROCKET(STD)", "price": 520.0, "category": "Rockets" }, { "id": 135, "name": "WHISTLING ROCKET(SHANA)", "price": 370.0, "category": "Rockets" }, { "id": 136, "name": "2 SOUND BOMB (LAVYANA)", "price": 60.0, "category": "Bombs" }, { "id": 137, "name": "POWERPOINT (VN)", "price": 1020.0, "category": "Other Crackers" }, { "id": 138, "name": "TOP CODE(VN)", "price": 920.0, "category": "Other Crackers" }, { "id": 139, "name": "6 SINGLE BOMB", "price": 100.0, "category": "Bombs" }, { "id": 140, "name": "5\" SINGLE SOUND CRACKER", "price": 90.0, "category": "Bombs" }, { "id": 141, "name": "4.5\" SINGLE SOUND CRACKER", "price": 80.0, "category": "Bombs" }, { "id": 142, "name": "BUTTERFLY(ARYAN)", "price": 140.0, "category": "Kids Special" }, { "id": 143, "name": "BUTTERFLY(RIO)", "price": 130.0, "category": "Kids Special" }, { "id": 144, "name": "4 COLOUR PENCIL(STD)", "price": 480.0, "category": "Other Crackers" }, { "id": 145, "name": "HELICOPTER(AMAN)", "price": 250.0, "category": "Kids Special" }, { "id": 146, "name": "BUTTERFLY(VISHNU)", "price": 250.0, "category": "Kids Special" }, { "id": 147, "name": "BAMBARA (VISHNU)", "price": 270.0, "category": "Other Crackers" }, { "id": 148, "name": "DRONE (VISHNU)", "price": 280.0, "category": "Kids Special" }, { "id": 149, "name": "DRONE(CORO)", "price": 390.0, "category": "Kids Special" }, { "id": 150, "name": "CRACKLING TREE (MERCURY)", "price": 950.0, "category": "Other Crackers" }, { "id": 151, "name": "CIGRATE BOMB", "price": 240.0, "category": "Bombs" }, { "id": 152, "name": "WONDER THROW", "price": 300.0, "category": "Other Crackers" }, { "id": 153, "name": "KITE", "price": 40.0, "category": "Kids Special" }, { "id": 154, "name": "KITKAT", "price": 50.0, "category": "Kids Special" }, { "id": 155, "name": "CHITPUT (VISHNU/LC)", "price": 130.0, "category": "Kids Special" }, { "id": 156, "name": "BAMBARA (LC)", "price": 200.0, "category": "Other Crackers" }, { "id": 157, "name": "28 CHORSA SPL", "price": 40.0, "category": "Ladi & Bijili" }, { "id": 158, "name": "28 GAINT MBR", "price": 50.0, "category": "Other Crackers" }, { "id": 159, "name": "24 DLX MBR", "price": 90.0, "category": "Ladi & Bijili" }, { "id": 160, "name": "24 DLX SPL", "price": 90.0, "category": "Ladi & Bijili" }, { "id": 161, "name": "50 DLX SPL", "price": 200.0, "category": "Ladi & Bijili" }, { "id": 162, "name": "100 DLX", "price": 440.0, "category": "Ladi & Bijili" }, { "id": 163, "name": "1000 WALA (SPCL)", "price": 730.0, "category": "Ladi & Bijili" }, { "id": 164, "name": "12 STAR (SS)", "price": 460.0, "category": "Sky Shots" }, { "id": 165, "name": "12 SHOT(COCK)", "price": 550.0, "category": "Sky Shots" }, { "id": 166, "name": "12 SHOT(JAWA)", "price": 270.0, "category": "Sky Shots" }, { "id": 167, "name": "12 SHOT POPEYE (SONNY)", "price": 990.0, "category": "Sky Shots" }, { "id": 168, "name": "12 SHOTS SILVER ARMY (SONY)", "price": 540.0, "category": "Sky Shots" }, { "id": 169, "name": "16 COLOUR PAPER SHOT(STD)", "price": 950.0, "category": "Sky Shots" }, { "id": 170, "name": "12 SHOT MUSICZ RIP(NYAGI)", "price": 950.0, "category": "Sky Shots" }, { "id": 171, "name": "15 MULTICOLOUR SHOTS (JAWA)", "price": 640.0, "category": "Sky Shots" }, { "id": 172, "name": "30 MULTICOLOUR SHOTS (JAWA)", "price": 1050.0, "category": "Sky Shots" }, { "id": 173, "name": "30 MULTICOLOUR SHOTS (VINAYAK)", "price": 1250.0, "category": "Sky Shots" }, { "id": 174, "name": "30 MULTI COLOUR SHOTS (LIYA)", "price": 1380.0, "category": "Sky Shots" }, { "id": 175, "name": "SKY SHOW 30 SHOTS(SS)", "price": 1430.0, "category": "Sky Shots" }, { "id": 176, "name": "60 MULTICOLOUR SHOTS (JAWA)", "price": 2000.0, "category": "Sky Shots" }, { "id": 177, "name": "60 MULTICOLOUR SHOTS (VINAYAK)", "price": 2250.0, "category": "Sky Shots" }, { "id": 178, "name": "100 MULTI COLOUR SHOTS HOT N SPICY(SS)", "price": 3850.0, "category": "Sky Shots" }, { "id": 179, "name": "100 MULTICOLOUR SHOTS ULTRA DELUX(SS)", "price": 4000.0, "category": "Sky Shots" }, { "id": 180, "name": "120 MULTICOLOUR SHOTS (JAWA)", "price": 4000.0, "category": "Sky Shots" }, { "id": 181, "name": "120 MULTICOLOUR SHOTS (VINAYAK)", "price": 4400.0, "category": "Sky Shots" }, { "id": 182, "name": "120 MULTICOLOUR SHOTS STAR SHOW (SS)", "price": 4350.0, "category": "Sky Shots" }, { "id": 183, "name": "240 MULTICOLOUR SHOTS (JAWA)", "price": 7250.0, "category": "Sky Shots" }, { "id": 184, "name": "10*10 MULTI COLOUR(LIYA)", "price": 8750.0, "category": "Other Crackers" }, { "id": 185, "name": "12 STEP 4\" PIPE(LIYA)", "price": 800.0, "category": "Sky Shots" }, { "id": 186, "name": "SNAKE EYE 6\" PIPE(VN)", "price": 4000.0, "category": "Sky Shots" }, { "id": 187, "name": "2\" 3 PC PIPE (JAWA)", "price": 490.0, "category": "Sky Shots" }, { "id": 188, "name": "2\" SINGLE PIPE (JAWA)", "price": 190.0, "category": "Sky Shots" }, { "id": 189, "name": "2\" SINGLE PIPE MIX(STD)", "price": 250.0, "category": "Sky Shots" }, { "id": 190, "name": "3.5\" PIPE MIX(NSV)", "price": 730.0, "category": "Sky Shots" }, { "id": 191, "name": "3.5\" SINGLE UV PIPE(JAWA)", "price": 630.0, "category": "Sky Shots" }, { "id": 192, "name": "3.5\" PIPE(INF)", "price": 990.0, "category": "Sky Shots" }, { "id": 193, "name": "3.5 PIPE MIX(COCK)", "price": 1200.0, "category": "Sky Shots" }, { "id": 194, "name": "BLOSSOM(COCK)", "price": 1080.0, "category": "Sky Shots" }, { "id": 195, "name": "GREEN COSCO(COCK)", "price": 1150.0, "category": "Sky Shots" }, { "id": 196, "name": "TRIPLE TREAT (INF)", "price": 2750.0, "category": "Other Crackers" }, { "id": 197, "name": "ROLLER COASTER 4\" 2PC PIPE(ANIL)", "price": 2450.0, "category": "Sky Shots" }, { "id": 198, "name": "SPIDERMAN 4\" PIPE 2PC(LIMA)", "price": 1950.0, "category": "Sky Shots" }, { "id": 199, "name": "POP POP 25PC DANA", "price": 20.0, "category": "Kids Special" }, { "id": 200, "name": "POP POP 35 DANA", "price": 30.0, "category": "Kids Special" }, { "id": 201, "name": "POP POP PRIME", "price": 20.0, "category": "Kids Special" }, { "id": 202, "name": "Top Tiger NO6 SPL", "price": 370.0, "category": "Bombs" }, { "id": 203, "name": "Top Tiger NO 5 SPCL", "price": 350.0, "category": "Bombs" }, { "id": 204, "name": "Top Tiger NO 4 SPL", "price": 320.0, "category": "Bombs" }, { "id": 205, "name": "Top Tiger NO 3", "price": 240.0, "category": "Bombs" }, { "id": 206, "name": "Top Tiger NO 2", "price": 200.0, "category": "Bombs" }, { "id": 207, "name": "SHORSHER NO 6 SPL", "price": 430.0, "category": "Bombs" }, { "id": 208, "name": "SHORSHER NOS", "price": 400.0, "category": "Bombs" }, { "id": 209, "name": "SIMMBA NO 6", "price": 570.0, "category": "Bombs" }, { "id": 210, "name": "CHEETAH NO 10 SPL", "price": 620.0, "category": "Bombs" }, { "id": 211, "name": "ELEPHANT BOMB", "price": 620.0, "category": "Bombs" }];
+
         const quantities = {};
         let currentCat = 'ALL';
 
-        function renderTable(list) {
-            const tbody = document.getElementById('productRows');
-            if (!tbody) return;
-            tbody.innerHTML = '';
+        const categoryIcons = {
+            'ALL': '🎇',
+            'Sparklers': '✨',
+            'Chakkar': '🌀',
+            'Anar / Pots': '🎆',
+            'Rockets': '🚀',
+            'Sky Shots': '🌌',
+            'Bombs': '💣',
+            'Ladi & Bijili': '🧨',
+            'Kids Special': '🎈',
+            'Other Crackers': '📦'
+        };
+
+        const categoryTagClass = {
+            'Sparklers': 'tag-cat-sparklers',
+            'Chakkar': 'tag-cat-chakkar',
+            'Anar / Pots': 'tag-cat-anar',
+            'Rockets': 'tag-cat-rockets',
+            'Sky Shots': 'tag-cat-skyshots',
+            'Bombs': 'tag-cat-bombs',
+            'Ladi & Bijili': 'tag-cat-ladi',
+            'Kids Special': 'tag-cat-kids',
+            'Other Crackers': 'tag-cat-default'
+        };
+
+        const coupons = {
+            "10DIWALI": { type: "percent", value: 10, label: "10% Diwali Discount applied!" },
+            "DIWALI20": { type: "percent", value: 20, label: "20% Super Festive Discount!" },
+            "NIT20": { type: "percent", value: 20, label: "20% Special Discount applied!" },
+            "GHOSTRIDER": { type: "percent", value: 30, label: "30% Mega Bumper Discount!" },
+            "GOLI22": { type: "percent", value: 22, label: "22% Dhamaka Discount applied!" }
+        };
+
+        let rawSubtotal = 0;
+        let discountAmount = 0;
+        let appliedCouponCode = "";
+
+        // Refined Golden Particle Canvas
+        const canvas = document.getElementById('confettiCanvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Particle {
+            constructor(x, y, color) {
+                this.x = x;
+                this.y = y;
+                this.color = color || ['#b71c1c', '#f59e0b', '#d97706', '#10b981', '#ef4444'][Math.floor(Math.random() * 5)];
+                this.size = Math.random() * 4 + 2.5;
+                const angle = Math.random() * Math.PI * 2;
+                const speed = Math.random() * 6 + 2;
+                this.vx = Math.cos(angle) * speed;
+                this.vy = Math.sin(angle) * speed - 1;
+                this.alpha = 1;
+                this.gravity = 0.14;
+                this.decay = Math.random() * 0.02 + 0.015;
+            }
+            update() {
+                this.vx *= 0.98;
+                this.vy += this.gravity;
+                this.x += this.vx;
+                this.y += this.vy;
+                this.alpha -= this.decay;
+            }
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = Math.max(0, this.alpha);
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        function triggerBurst(x, y, count = 24) {
+            for (let i = 0; i < count; i++) {
+                particles.push(new Particle(x, y));
+            }
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = particles.length - 1; i >= 0; i--) {
+                const p = particles[i];
+                p.update();
+                p.draw();
+                if (p.alpha <= 0) {
+                    particles.splice(i, 1);
+                }
+            }
+            requestAnimationFrame(animateParticles);
+        }
+        animateParticles();
+
+        // Toast Feedback
+        let toastTimeout;
+        function showToast(msg, icon = '💥') {
+            const toast = document.getElementById('toastBox');
+            document.getElementById('toastMsg').innerText = msg;
+            document.getElementById('toastIcon').innerText = icon;
+            toast.classList.add('show');
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2200);
+        }
+
+        // Render Product Feed
+        function renderFeed(list) {
+            const feed = document.getElementById('productFeed');
+            const resultsCount = document.getElementById('resultsCount');
+            const categoryBadge = document.getElementById('categoryNameBadge');
+
+            if (categoryBadge) {
+                categoryBadge.innerText = currentCat === 'ALL' ? 'All Categories' : currentCat;
+            }
+
+            if (!feed) return;
+            feed.innerHTML = '';
+
             if (!list || list.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:20px; color:#888;">Koi item nahi mila</td></tr>';
+                if (resultsCount) resultsCount.innerText = '0 items found';
+                feed.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🔍</div>
+                        <h3>Koi patakha nahi mila</h3>
+                        <p>Kripya spelling check karein ya filters reset karein.</p>
+                        <button class="btn-clear-filters" onclick="resetFilters()">Reset All Filters</button>
+                    </div>
+                `;
                 return;
             }
+
+            if (resultsCount) resultsCount.innerText = `Showing ${list.length} item${list.length > 1 ? 's' : ''}`;
+
+            const fragment = document.createDocumentFragment();
+
             list.forEach(item => {
                 const qty = quantities[item.id] || 0;
                 const total = qty * item.price;
-                const tr = document.createElement('tr');
-                tr.id = `row-${item.id}`;
-                tr.innerHTML = `
-                    <td class="t-name">
-                        <div class="item-cell">
-                            <a href="https://www.google.com/search?tbm=isch&q=${encodeURIComponent(item.name + ' fireworks cracker')}" target="_blank" class="camera-icon-btn" title="Google par photo search karein">
-                                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#d32f2f" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-                                    <circle cx="12" cy="13" r="4"/>
+                const card = document.createElement('div');
+                card.className = `product-card ${qty > 0 ? 'has-items' : ''}`;
+                card.id = `card-${item.id}`;
+
+                const tagClass = categoryTagClass[item.category] || 'tag-cat-default';
+                const searchUrl = `https://www.google.com/search?tbm=isch&q=${encodeURIComponent(item.name + ' fireworks cracker')}`;
+
+                card.innerHTML = `
+                    <div class="card-left">
+                        <div class="card-tags">
+                            <span class="tag-cat ${tagClass}">${categoryIcons[item.category] || '🎇'} ${item.category}</span>
+                            <span class="tag-id">#${item.id}</span>
+                        </div>
+                        <div class="card-title">${item.name}</div>
+                        <div class="card-actions-row">
+                            <a href="${searchUrl}" target="_blank" rel="noopener noreferrer" class="photo-link-btn" title="Google par photo dekhein">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                                    <circle cx="12" cy="13" r="4"></circle>
                                 </svg>
+                                <span>Photo</span>
                             </a>
-                            <span class="p-title">${item.name}</span>
                         </div>
-                    </td>
-                    <td class="t-price">₹${item.price.toFixed(0)}</td>
-                    <td class="t-qty">
-                        <div class="qty-box">
-                            <button class="q-btn" onclick="updateQty(${item.id}, -1)">-</button>
-                            <input class="q-val" type="text" id="input-${item.id}" value="${qty}" readonly>
-                            <button class="q-btn" onclick="updateQty(${item.id}, 1)">+</button>
+                    </div>
+                    <div class="card-right">
+                        <div class="price-badge">
+                            <div class="price-val">₹${item.price.toFixed(0)}</div>
+                            <div class="price-sub-calc" id="subcalc-${item.id}">${qty > 0 ? '= ₹' + total.toFixed(0) : ''}</div>
                         </div>
-                    </td>
-                    <td class="t-total" id="tot-${item.id}">${total > 0 ? '₹' + total.toFixed(0) : '-'}</td>
-                    <td class="t-id">${item.id}</td>
+                        <div id="action-slot-${item.id}">
+                            ${qty === 0 ? `
+                                <button class="btn-add-initial" onclick="handleInitialAdd(event, ${item.id})">
+                                    <span>+</span> ADD
+                                </button>
+                            ` : `
+                                <div class="stepper-box">
+                                    <button class="step-btn minus" onclick="handleQtyChange(event, ${item.id}, -1)">−</button>
+                                    <span class="step-val" id="qty-val-${item.id}">${qty}</span>
+                                    <button class="step-btn plus" onclick="handleQtyChange(event, ${item.id}, 1)">+</button>
+                                </div>
+                            `}
+                        </div>
+                    </div>
                 `;
-                tbody.appendChild(tr);
+                fragment.appendChild(card);
             });
+
+            feed.appendChild(fragment);
+        }
+
+        function handleInitialAdd(event, id) {
+            const rect = event.currentTarget.getBoundingClientRect();
+            triggerBurst(rect.left + rect.width / 2, rect.top + rect.height / 2, 20);
+            updateQty(id, 1);
+            showToast('Item added to cart! 💥', '🛍️');
+        }
+
+        function handleQtyChange(event, id, delta) {
+            if (delta > 0) {
+                const rect = event.currentTarget.getBoundingClientRect();
+                triggerBurst(rect.left + rect.width / 2, rect.top + rect.height / 2, 14);
+            }
+            updateQty(id, delta);
         }
 
         function updateQty(id, delta) {
             const current = quantities[id] || 0;
             const updated = Math.max(0, current + delta);
-            if (updated === 0) delete quantities[id];
-            else quantities[id] = updated;
 
-            const input = document.getElementById(`input-${id}`);
-            if (input) input.value = updated;
+            if (updated === 0) {
+                delete quantities[id];
+            } else {
+                quantities[id] = updated;
+            }
 
             const item = products.find(p => p.id === id);
-            const totEl = document.getElementById(`tot-${id}`);
-            if (totEl && item) {
-                const t = updated * item.price;
-                totEl.innerText = t > 0 ? '₹' + t.toFixed(0) : '-';
+            const card = document.getElementById(`card-${id}`);
+            const actionSlot = document.getElementById(`action-slot-${id}`);
+            const subcalc = document.getElementById(`subcalc-${id}`);
+
+            if (card) {
+                if (updated > 0) card.classList.add('has-items');
+                else card.classList.remove('has-items');
             }
+
+            if (subcalc && item) {
+                subcalc.innerText = updated > 0 ? `= ₹${(updated * item.price).toFixed(0)}` : '';
+            }
+
+            if (actionSlot) {
+                if (updated === 0) {
+                    actionSlot.innerHTML = `
+                        <button class="btn-add-initial" onclick="handleInitialAdd(event, ${id})">
+                            <span>+</span> ADD
+                        </button>
+                    `;
+                } else {
+                    actionSlot.innerHTML = `
+                        <div class="stepper-box">
+                            <button class="step-btn minus" onclick="handleQtyChange(event, ${id}, -1)">−</button>
+                            <span class="step-val" id="qty-val-${id}">${updated}</span>
+                            <button class="step-btn plus" onclick="handleQtyChange(event, ${id}, 1)">+</button>
+                        </div>
+                    `;
+                }
+            }
+
             updateTotals();
         }
 
@@ -270,17 +1454,51 @@
                     grandTotal += (q * item.price);
                 }
             }
-            document.getElementById('selectedCount').innerText = `${count} items`;
-            document.getElementById('barTotal').innerText = `₹${grandTotal.toFixed(0)}`;
+
+            const floatingCart = document.getElementById('floatingCart');
+            const selectedCount = document.getElementById('selectedCount');
+            const barTotal = document.getElementById('barTotal');
+
+            if (selectedCount) selectedCount.innerText = `${count} ITEM${count > 1 ? 'S' : ''}`;
+            if (barTotal) barTotal.innerText = `₹${grandTotal.toFixed(0)}`;
+
+            if (floatingCart) {
+                if (count > 0) {
+                    floatingCart.classList.add('visible');
+                } else {
+                    floatingCart.classList.remove('visible');
+                }
+            }
         }
+
+        function handleSearchInput() {
+            const input = document.getElementById('search');
+            const clearBtn = document.getElementById('searchClearBtn');
+            if (clearBtn) {
+                clearBtn.style.display = input.value.trim().length > 0 ? 'flex' : 'none';
+            }
+            filterList();
+        }
+
+        function clearSearch() {
+            const input = document.getElementById('search');
+            if (input) {
+                input.value = '';
+                input.focus();
+            }
+            const clearBtn = document.getElementById('searchClearBtn');
+            if (clearBtn) clearBtn.style.display = 'none';
+            filterList();
+        }
+
         function filterList() {
-            const query = document.getElementById('search').value.toLowerCase().trim();
+            const query = (document.getElementById('search').value || '').toLowerCase().trim();
             const filtered = products.filter(p => {
                 const matchesCat = (currentCat === 'ALL' || p.category === currentCat);
                 const matchesSearch = p.name.toLowerCase().includes(query) || p.id.toString() === query;
                 return matchesCat && matchesSearch;
             });
-            renderTable(filtered);
+            renderFeed(filtered);
         }
 
         function setCategory(cat) {
@@ -296,23 +1514,14 @@
         }
 
         function resetFilters() {
-            document.getElementById('search').value = '';
+            const input = document.getElementById('search');
+            if (input) input.value = '';
+            const clearBtn = document.getElementById('searchClearBtn');
+            if (clearBtn) clearBtn.style.display = 'none';
             setCategory('ALL');
         }
 
-        let rawSubtotal = 0;
-        let discountAmount = 0;
-        let appliedCouponCode = "";
-
-        const coupons = {
-            "10DIWALI": { type: "percent", value: 10, label: "10% Discount applied!" },
-            "DIWALI20": { type: "percent", value: 20, label: "20% Discount applied!" },
-            "NIT30": { type: "percent", value: 30, label: "30% Discount applied!" },
-            "GHOSTRIDER": { type: "percent", value: 30, label: "30% Discount applied!" },
-            "GOLI22": { type: "percent", value: 22, label: "22% Discount applied!" }
-        };
-
-
+        // Coupon Logic
         function calculateFinalPayable() {
             return Math.max(0, rawSubtotal - discountAmount);
         }
@@ -331,15 +1540,21 @@
             }
         }
 
+        function quickApplyCoupon(code) {
+            const input = document.getElementById('couponInput');
+            if (input) input.value = code;
+            applyCoupon();
+        }
+
         function applyCoupon() {
             const input = document.getElementById('couponInput');
-            const code = input.value.trim().toUpperCase();
+            const code = (input.value || '').trim().toUpperCase();
             const msgEl = document.getElementById('couponMsg');
 
             if (!code) {
                 discountAmount = 0;
                 appliedCouponCode = "";
-                msgEl.style.display = 'none';
+                if (msgEl) msgEl.style.display = 'none';
                 refreshBillSummary();
                 return;
             }
@@ -349,11 +1564,14 @@
                 discountAmount = Math.round((rawSubtotal * c.value) / 100);
                 appliedCouponCode = code;
                 msgEl.style.display = 'block';
-                msgEl.style.color = '#2e7d32';
+                msgEl.style.color = '#15803d';
                 msgEl.innerText = `✓ ${c.label} (-₹${discountAmount})`;
+
+                triggerBurst(window.innerWidth / 2, window.innerHeight / 2, 45);
+                showToast(`Coupon ${code} applied! 🎉`, '🏷️');
             } else {
                 msgEl.style.display = 'block';
-                msgEl.style.color = '#c62828';
+                msgEl.style.color = '#dc2626';
                 msgEl.innerText = "Galat coupon code! Kripya sahi code daalein.";
                 discountAmount = 0;
                 appliedCouponCode = "";
@@ -362,10 +1580,11 @@
             refreshBillSummary();
         }
 
+        // Bottom Sheet & Modal Controls
         function openCheckout() {
             const selectedIds = Object.keys(quantities);
             if (selectedIds.length === 0) {
-                alert('Kripya pehle kuch patakho ki quantity select karein!');
+                showToast('Pehle kuch patakha add karein!', '⚠️');
                 return;
             }
 
@@ -378,15 +1597,15 @@
                 const sub = q * p.price;
                 rawSubtotal += sub;
                 summaryHtml += `
-                    <div class="summary-line">
-                        <span>${p.name} (x${q})</span>
-                        <strong>₹${sub.toFixed(0)}</strong>
+                    <div class="summary-row">
+                        <span class="summary-item-name">${p.name} (x${q})</span>
+                        <span class="summary-item-price">₹${sub.toFixed(0)}</span>
                     </div>
                 `;
             });
 
             document.getElementById('orderSummary').innerHTML = summaryHtml;
-            
+
             if (appliedCouponCode && coupons[appliedCouponCode]) {
                 applyCoupon();
             } else {
@@ -397,26 +1616,69 @@
                 refreshBillSummary();
             }
 
-            document.getElementById('orderModal').style.display = 'flex';
+            const modal = document.getElementById('orderModal');
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
         }
 
         function closeCheckout() {
-            document.getElementById('orderModal').style.display = 'none';
+            const modal = document.getElementById('orderModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function handleOverlayClick(event) {
+            if (event.target.id === 'orderModal') {
+                closeCheckout();
+            }
         }
 
         async function recordOrderToSheet(payload) {
             if (!GOOGLE_SHEET_WEBAPP_URL || GOOGLE_SHEET_WEBAPP_URL.trim() === "") return;
             try {
+                // 3.5s timeout controller so WhatsApp redirect is never blocked if network is slow
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 3500);
+
                 await fetch(GOOGLE_SHEET_WEBAPP_URL, {
                     method: "POST",
                     mode: "no-cors",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(payload)
+                    headers: { "Content-Type": "text/plain;charset=utf-8" },
+                    body: JSON.stringify(payload),
+                    signal: controller.signal
                 });
+                clearTimeout(timeoutId);
             } catch (err) {
                 console.error("Sheet record error:", err);
             }
         }
+
+        window.testGoogleSheetConnection = async function () {
+            if (!GOOGLE_SHEET_WEBAPP_URL || GOOGLE_SHEET_WEBAPP_URL.trim() === "") {
+                alert("⚠️ GOOGLE_SHEET_WEBAPP_URL is currently empty!\n\nKripya pehle index.html mein apna Google Apps Script Web App URL paste karein.");
+                return false;
+            }
+            const testPayload = {
+                name: "Test Order (Vishal Fireworks)",
+                phone: "9876543210",
+                address: "Shop #1, Sivakasi Main Road",
+                subtotal: 1000,
+                coupon: "DIWALI20",
+                discount: 200,
+                finalTotal: 800,
+                itemsSummary: "7CM ELECTRIC (x5), 12 SHOT COCK (x1)"
+            };
+            showToast("Sending test row to Google Sheet...", "⏳");
+            try {
+                await recordOrderToSheet(testPayload);
+                showToast("Test row sent to Google Sheet! Check your sheet.", "✅");
+                alert("✅ Test order payload successfully sent!\n\nAbhi apni Google Sheet check karein, wahan nayi row live dikhegi.");
+                return true;
+            } catch (err) {
+                alert("❌ Error sending to Google Sheet: " + err);
+                return false;
+            }
+        };
 
         async function processAndSendOrder() {
             const name = document.getElementById('custName').value.trim();
@@ -424,13 +1686,13 @@
             const address = document.getElementById('custAddress').value.trim();
 
             if (!name || !phone || !address) {
-                alert('Kripya apna Naam, Mobile Number aur Pata teeno bharein!');
+                showToast('Kripya Naam, Number aur Pata teeno bharein!', '⚠️');
                 return;
             }
 
             const phoneDigits = phone.replace(/[^0-9]/g, '');
             if (phoneDigits.length < 10) {
-                alert('Kripya valid 10-digit mobile number enter karein!');
+                showToast('Valid 10-digit mobile number enter karein!', '⚠️');
                 return;
             }
 
@@ -463,35 +1725,46 @@
             }
             msg += `💰 *TOTAL PAYABLE: ₹${finalPayable.toFixed(0)}*\n`;
             msg += `--------------------------------\n`;
-            msg += `Kripya mera order pack karein aur confirm karein! 🙏✨`;
+            msg += `Kripya mera order pack karein aur confirm karein! 🙏✨\n\n`;
 
-            const orderPayload = {
-                name: name,
-                phone: phone,
-                address: address,
-                subtotal: rawSubtotal,
-                coupon: appliedCouponCode || "NONE",
-                discount: discountAmount,
-                finalTotal: finalPayable,
-                itemsSummary: itemsSummaryList.join(", ")
-            };
+            // Admin One-Tap Confirmation & Save to Sheet Link
+            if (GOOGLE_SHEET_WEBAPP_URL && GOOGLE_SHEET_WEBAPP_URL.trim() !== "") {
+                const orderData = {
+                    name: name,
+                    phone: phone,
+                    address: address,
+                    items: itemsSummaryList.join(", "),
+                    subtotal: rawSubtotal,
+                    coupon: appliedCouponCode || "NONE",
+                    discount: discountAmount,
+                    total: finalPayable
+                };
+                // Safe UTF-8 Base64 serialization to prevent WhatsApp URL parameter collision
+                const b64Data = btoa(encodeURIComponent(JSON.stringify(orderData)).replace(/%([0-9A-F]{2})/g, function (match, p1) {
+                    return String.fromCharCode('0x' + p1);
+                }));
+                const confirmUrl = `${GOOGLE_SHEET_WEBAPP_URL}?action=confirm&d=${encodeURIComponent(b64Data)}`;
+                msg += `🔒 *Admin Confirmation Link (Tap to Save in Sheet):*\n${confirmUrl}`;
+            }
 
             const btn = document.getElementById('btnSubmitOrder');
             const originalText = btn.innerHTML;
-            btn.innerHTML = "<span>⏳ Sending Order...</span>";
+            btn.innerHTML = "<span>💬 Opening WhatsApp...</span>";
             btn.disabled = true;
 
-            await recordOrderToSheet(orderPayload);
+            triggerBurst(window.innerWidth / 2, window.innerHeight * 0.7, 60);
 
-            btn.innerHTML = originalText;
-            btn.disabled = false;
-
-            const waUrl = `https://wa.me/919040443841?text=${encodeURIComponent(msg)}`;
-            window.location.href = waUrl;
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+                const waUrl = `https://wa.me/919040443841?text=${encodeURIComponent(msg)}`;
+                window.location.href = waUrl;
+            }, 300);
         }
 
         // Table load initiation
-        renderTable(products);
+        renderFeed(products);
     </script>
 </body>
+
 </html>
